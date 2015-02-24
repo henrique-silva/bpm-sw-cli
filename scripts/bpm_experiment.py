@@ -157,7 +157,7 @@ class BPMExperiment():
                 print(' '.join(command_argument_list))
 
         # Compute data file signature
-        with open(data_filename, 'r') as f: 
+        with open(data_filename, 'r') as f:
             text = f.read()
 
         if self.metadata['data_signature_method'].split()[0] == 'md5':

@@ -20,12 +20,12 @@ class RS_gen():
         read_buffer_size = self.buffer_size
         data = s.recv(read_buffer_size)
         return data
-        
+
     def ask(self, msg):
         self.send_msg(msg)
         data = self.read_msg()
         return data
-        
+
     def set_pow(self, pout = -80):
         self.send_msg('POW '+str(pout)+'\n')
 
