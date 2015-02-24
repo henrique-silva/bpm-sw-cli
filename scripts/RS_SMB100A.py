@@ -7,18 +7,18 @@ class RS_gen():
         self.port = port
         self.buffer_size = buffer_size
         try:
-            self.sock = socket.create_connection((self.ip,self.port), timeout)
+            self.socket = socket.create_connection((self.ip,self.port), timeout)
             self.set_pow()
-        except socket.error as err:
-            print('Socket error: '+str(err))
+        except socket.error:
+            raise
 
     def send_msg(self, msg):
         msg = str.encode(str(msg))
-        self.sock.send(msg)
+        self.socket.send(msg)
 
     def read_msg(self, read_buffer_size = 0):
         read_buffer_size = self.buffer_size
-        data = s.recv(read_buffer_size)
+        data = self.socket.recv(read_buffer_size)
         return data
 
     def ask(self, msg):
