@@ -25,6 +25,7 @@ def run_single(argv):
         args.board = '0'
     if not args.bpm:
         args.bpm = '0'
+
     if args.allboards:
         board = ['0','1','2','3','4','5']
         bpm = ['0','1']

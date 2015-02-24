@@ -17,8 +17,8 @@ def run_pow_sweep(argv):
     parser.add_argument('step', help='sweep power step', type=int, default=10)
     parser.add_argument('-g','--genip', help='generator ip address', default='10.0.17.44')
     parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.0.18.39:8888')
-    parser.add_argument('-d','--board', type=int, choices=[0,1,2,3,4,5], help='select the target board for the test', default='0')
-    parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', default='0')
+    parser.add_argument('-d','--board', type=int, help='select the target board for the test', action='append')
+    parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
     parser.add_argument('-l','--loss', type=float, help='external power loss in the test', default=6.8)
@@ -26,6 +26,11 @@ def run_pow_sweep(argv):
     args = parser.parse_args(argv)
 
     exp = BPMExperiment(args.endpoint)
+
+    if not args.board:
+        args.board = '0'
+    if not args.bpm:
+        args.bpm = '0'
 
     #Configure the RF Generator
     gen = RS_gen(args.genip)
@@ -38,7 +43,7 @@ def run_pow_sweep(argv):
         print('New test initiated at ' + strftime('%Y-%m-%d %H:%M:%S'))
         print('======================================================')
 
-        gen.set_pow(Pout)    
+        gen.set_pow(Pout)
         print('Current Power (RFFE input) = '+str(Pout-args.loss)+' dBm')
 
         #Use a temporary metadata to pass the input power to the called functions
