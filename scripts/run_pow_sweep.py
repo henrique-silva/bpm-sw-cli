@@ -54,18 +54,20 @@ def run_pow_sweep(argv):
             temp_path = os.path.abspath(temp.name)
 
         single_args = [temp_path, args.output, '-e' ,args.endpoint, '-p', 'fofb', '-s']
+        if args.rffeconfig:
+            single_args.extend(['-r'])
         if args.allboards:
             single_args.extend(['-a'])
         else:
-            single_args.extend(['-d', str(args.board),'-b', str(args.bpm)])
-        if args.rffeconfig:
-            single_args.extend(['-r'])
+            for board_nmb in args.board:
+                for bpm_nmb in args.bpm:
+                    single_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
         run_single(single_args)
         os.remove(temp_path)
-        
+
     gen.set_pow(-80)
     gen.rf_off()
-    
+
 if __name__ == "__main__":
     import sys
     run_pow_sweep(sys.argv[1:])

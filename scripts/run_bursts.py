@@ -50,12 +50,15 @@ while True:
             print ("Power sweep arguments not provided! Aborting operation...")
             break
         pow_sweep_args = [args.metadata, args.datapath, str(args.start), str(args.stop), str(args.step), '-e' ,args.endpoint]
+        if args.rffeconfig:
+            pow_sweep_args.extend(['-r'])
         if args.allboards:
             pow_sweep_args.extend(['-a'])
         else:
-            pow_sweep_args.extend(['-d', str(args.board),'-b', str(args.bpm)])
-        if args.rffeconfig:
-            pow_sweep_args.extend(['-r'])
+            for board_nmb in args.board:
+                for bpm_nmb in args.bpm:
+                    pow_sweep_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
+
         run_pow_sweep(pow_sweep_args)
 
     else:
@@ -69,6 +72,7 @@ while True:
             sleep(1)
 
         last_experiment_time = time.time()
+        sys.stdout.flush()
 
     except KeyboardInterrupt:
         print('\nThe bursts experiment has ended.\n')
