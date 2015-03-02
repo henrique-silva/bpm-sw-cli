@@ -95,12 +95,22 @@ class BPMExperiment():
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
             command_argument_list.extend(['--rffesetsw', self.metadata['rffe_switching'].split()[0]])
             #command_argument_list.extend(['-v'])
-            att_items = self.metadata['rffe_attenuators'].split(',')
-            i = 1
-            for item in att_items:
-                item.strip()
-                command_argument_list.extend(['--rffesetatt', 'chan=' + str(i) + ',value=' + item.split()[0]])
-                i = i+1
+
+            if self.metadata['signal_source'].split()[0] == 'signalgenerator':
+                att_items = self.metadata['rffe_attenuators'].split(',')
+                natt = len(att_items)
+                rffe_gain = float(self.metadata['rffe_gain'].split()[0])
+                rffe_input_power = float(self.metadata['rffe_signal_carrier_inputpower'].split()[0])
+                rffe_power_threshold = float(self.metadata['rffe_power_threshold'].split()[0])
+                i = 1
+                for att_value in att_items:
+                    att_value = float(att_value.strip()[0])
+                    power_level = rffe_input_power + rffe_gain - att_value
+                    if power_level > rffe_power_threshold:
+                        raise OverPowerError(power_level)
+                    command_argument_list.extend(['--rffesetatt', 'chan=' + str(i) + ',value=' + str(att_value)])
+                    i = i+1
+
             if not self.debug:
             #Use timeout here to identify if the RFFE is responsive
                 try:
