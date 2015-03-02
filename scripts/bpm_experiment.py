@@ -123,6 +123,24 @@ class BPMExperiment():
             else:
                 print(' '.join(command_argument_list))
 
+            # Read RFFE temperature
+            command_argument_list = [self.binpath]
+            command_argument_list.extend(['--board', board])
+            command_argument_list.extend(['--bpm', bpm])
+            command_argument_list.extend(['--endpoint', self.broker_endpoint])
+            #command_argument_list.extend(['-v'])
+            rffe_temp = [0] * 4
+            for chan in range(1,5):
+                command_argument_list.extend(['--rffegettemp', '-chan='+str(chan)])
+                if not self.debug:
+                    try:
+                        subprocess.call(command_argument_list, timeout=5)
+                        sleep(0.2) # FIXME: it seems RFFE controller (mbed) doesn't realize the connection has been closed
+                    except subprocess.TimeoutExpired:
+                        raise RFFETimeout
+                else:
+                    print(' '.join(command_argument_list))
+
         # TODO: Check if everything was properly set
 
         # Enable switching signal
@@ -199,8 +217,8 @@ class BPMExperiment():
         config_automatic_lines.append('timestamp_start = ' + timestamp_start + '\n')
         config_automatic_lines.append('data_file_structure = ' + data_file_structure + '\n')
         config_automatic_lines.append('data_file_format = ascii\n')
-        #config_automatic_lines.append('adc_board_temperature = ' + '0' + ' C\n') #TODO: implement ADC temperature read on FPGA
-        #config_automatic_lines.append('rffe_board_temperature = ' + '0' + ' C\n') #TODO: implement RFFE temperature read on FPGA
+        if rffe_config:
+            config_automatic_lines.append('rffe_board_temperature = '+rffe_temp[0]+' C, '+rffe_temp[1]+' C, '+rffe_temp[2]+' C, '+rffe_temp[3]+'\n')
 
         config_fromfile_lines = []
         config_fromfile_lines.extend(config_base_metadata_lines)
