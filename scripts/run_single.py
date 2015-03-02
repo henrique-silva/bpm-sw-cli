@@ -4,8 +4,10 @@ def run_single(argv):
     import sys
     import os
     import argparse
+    import bpm_experiment
+    sys.path.append('../th2e/')
+    from TH2E import TH2E
     from time import strftime
-    from bpm_experiment import BPMExperiment
 
     parser = argparse.ArgumentParser()
     parser.add_argument('metadata', help='metadata file path')
@@ -19,7 +21,8 @@ def run_single(argv):
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
     args = parser.parse_args(argv)
 
-    exp = BPMExperiment(args.endpoint)
+    exp = bpm_experiment.BPMExperiment(args.endpoint)
+    sensor = TH2E('10.0.18.210')
 
     if not args.board:
         args.board = '0'
@@ -38,6 +41,12 @@ def run_single(argv):
         print('\n====================')
         print('EXPERIMENT SETTINGS:')
         print('====================')
+
+        temp, hum, dew = sensor.read_all()
+        exp.metadata['rack_temperature'] = str(temp)+' C'
+        exp.metadata['rack_humidity'] = str(hum)+' %'
+        exp.metadata['rack_dew_point'] = str(dew)+' C'
+
         print(''.join(sorted(exp.get_metadata_lines())))
 
         if not args.silent:
