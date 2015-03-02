@@ -54,27 +54,29 @@ class BPMExperiment():
         # FIXME: should not divide by 2 and subtract 4 to make FPGA counter count right. FPGA must be corrected
         rffe_switching_frequency_ratio = str(int(self.metadata['rffe_switching_frequency_ratio'].split()[0])/2 - 4)
 
-        #Transforms the values 'on' and 'off' into its respectives boolean values 1 and 0
-        for item in self.metadata:
-            if (self.metadata[item].split()[0] == 'off'):
-                self.metadata[item] = '0'
-            elif (self.metadata[item].split()[0] == 'on'):
-                self.metadata[item] = '1'
-
         import subprocess
-
         # Run FPGA configuration commands
         command_argument_list = [self.binpath]
         command_argument_list.extend(['--board', board])
         command_argument_list.extend(['--bpm', bpm])
-        command_argument_list.extend(['--setwdwen', self.metadata['dsp_sausaging'].split()[0]])
         command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
         command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
         command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
         command_argument_list.extend(['--setswdly', deswitching_phase_offset])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
-        command_argument_list.extend(['--setsw', self.metadata['rffe_switching'].split()[0]])
+        
         #command_argument_list.extend(['-v'])
+        if self.metadata['dsp_sausaging'].split()[0] == 'on':
+            dsp_sausaging = '1'
+        else:
+            dsp_sausaging = '0'
+        command_argument_list.extend(['--setwdwen', dsp_sausaging ])
+
+        if self.metadata['rffe_switching'].split()[0] == 'on':
+            rffe_switching = '1'
+        else:
+            rffe_switching = '0'
+        command_argument_list.extend(['--setsw', rffe_switching])
 
         if not self.debug:
             #Use timeout here to identify if the board is responsive
