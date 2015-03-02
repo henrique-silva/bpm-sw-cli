@@ -15,7 +15,10 @@ class BPMExperiment():
         self.broker_endpoint = broker_endpoint
         self.debug = debug
         self.metadata_parser = MetadataParser()
-        self.binpath = binpath
+        if not os.path.isfile(binpath):
+            raise FileNotFoundError("\n\tBPM-SW Command Line Interface not found!")
+        else:
+            self.binpath = binpath
 
     def load_from_metadata(self, input_metadata_filename):
         # Parse metadata file into a dictionary
