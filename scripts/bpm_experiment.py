@@ -84,8 +84,7 @@ class BPMExperiment():
                 subprocess.call(command_argument_list, timeout=1)
             except subprocess.TimeoutExpired:
             #If the board doesn't respond, abort the call
-                print ('Error: Board doesn\'t respond! Aborting routine...')
-                return 'Board Timeout'
+                raise BoardTimeout
         else:
             print(' '.join(command_argument_list))
 
@@ -120,8 +119,7 @@ class BPMExperiment():
                     sleep(0.2) # FIXME: it seems RFFE controller (mbed) doesn't realize the connection has been closed
                 except subprocess.TimeoutExpired:
                 #If the RFFE doesn't respond, abort the call
-                    print ('Error: RFFE doesn\'t respond! Aborting routine...')
-                    return
+                    raise RFFETimeout
             else:
                 print(' '.join(command_argument_list))
 
