@@ -122,3 +122,6 @@ data_signature_method = md5                                                     
 data_source = experimental                                                          # possible values: experimental, experimental_postprocessed, simulation
 location = "LNLS"                                                                   # SPEAR3, SSRL, SLAC, Menlo Park, CA, USA
 location_timezone = BRT                                                             # possible values: PST, BRT
+rack_temperature =
+rack_humidity =
+rack_dew_point =
