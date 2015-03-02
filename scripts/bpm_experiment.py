@@ -211,3 +211,16 @@ class BPMExperiment():
 
         with open(output_metadata_filename, 'x') as f:
             f.writelines(sorted(config_fromfile_lines))
+
+class BPMError(Exception):
+    pass
+
+class OverPowerError(BPMError):
+    def __init__(self,value):
+        self.value = value
+
+class BoardTimeout(BPMError):
+    pass
+
+class RFFETimeout(BPMError):
+    pass
