@@ -21,7 +21,6 @@ def run_pow_sweep(argv):
     parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
-    parser.add_argument('-l','--loss', type=float, help='external power loss in the test', default=6.8)
     parser.add_argument('-f','--frequency', type=float, help='set generator frequency', default=477999596)
     args = parser.parse_args(argv)
 
@@ -36,21 +35,24 @@ def run_pow_sweep(argv):
     gen = RS_gen(args.genip)
     gen.set_freq(args.frequency)
 
+    loss = exp.metada['signal_power_loss'].split()[0]
+
     for Pout in range(args.start,args.stop,args.step):
         gen.rf_on()
-        Pout = Pout + args.loss
+        Pout = Pout + loss
         print('\n\n\n======================================================')
         print('New test initiated at ' + strftime('%Y-%m-%d %H:%M:%S'))
         print('======================================================')
 
         gen.set_pow(Pout)
-        print('Current Power (RFFE input) = '+str(Pout-args.loss)+' dBm')
+        print('Current Power (RFFE input) = '+str(Pout-loss)+' dBm')
 
         #Use a temporary metadata to pass the input power to the called functions
         exp.load_from_metadata(args.metadata)
-        exp.metadata['rffe_signal_carrier_inputpower'] = str(Pout-args.loss) + ' dBm'
+        exp.metadata['rffe_signal_carrier_inputpower'] = str(Pout-loss) + ' dBm'
         with open(args.metadata+'.temp','w') as temp:
             temp.writelines(''.join(sorted(exp.get_metadata_lines())))
+            temp.append('circuit_power_loss = '+str(loss)+' dB')
             temp_path = os.path.abspath(temp.name)
 
         single_args = [temp_path, args.output, '-e' ,args.endpoint, '-p', 'fofb', '-s']
