@@ -148,7 +148,7 @@ class BPMExperiment():
         command_argument_list.extend(['--bpm', bpm])
         command_argument_list.extend(['--setsamples', acq_npts])
         command_argument_list.extend(['--setchan', acq_channel])
-        #TODO: See if 10 seconds is enough time to the FOFB module finish its acquisition even with higher samples number
+        #TODO: Check if 10 seconds is enough time to the FOFB module finish its acquisition even with higher samples number
         command_argument_list.extend(['--timeout', '10'])
         command_argument_list.extend(['--fullacq'])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
@@ -186,7 +186,7 @@ class BPMExperiment():
         ns = int(floor((t * 1e9) % 1e9))
         timestamp_start = '%s.%09dZ' % (strftime('%Y-%m-%dT%H:%M:%S', gmtime(t)), ns)
 
-        # Trhow away absolute path of data filename
+        # Throw away absolute path of data filename
         data_filename_basename = os.path.basename(data_filename)
 
         # Build metadata file based on template metadata file and post-processed metadata
