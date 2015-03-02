@@ -77,14 +77,19 @@ def run_single(argv):
                     for i in range(0,len(data_filenames)):
                         print('        Running ' + args.datapath[i] + ' datapath...')
                         sys.stdout.flush()
-                        error = exp.run(data_filenames[i], args.datapath[i], str(board_number), str(bpm_number), args.rffeconfig)
-
-                        if not error:
-                            print(' done. Results in: ' + data_filenames[i])
-                        else:
+                        try:
+                            exp.run(data_filenames[i], args.datapath[i], str(board_number), str(bpm_number), args.rffeconfig)
+                        except bpm_experiment.OverPowerError as e:
+                            print ('The power level '+str(e.value)+' will damage the RFFE so it\'ll be skipped!')
                             continue
-                    if not error:
-                        print('The experiment has run successfully!\n');
+                        except bpm_experiment.BoardTimeout:
+                            print ('This Board doesn\'t respond and will be skipped!')
+                            continue
+                        except bpm_experiment.RFFETimeout:
+                            print ('RFFE board doesn\'t respond!')
+                            continue
+                        else:
+                            print(' done. Results in: ' + data_filenames[i])
             break
 
         elif input_text == 'q':
