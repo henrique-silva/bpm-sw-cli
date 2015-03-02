@@ -9,7 +9,7 @@ signal_source_signalgenerator_model = "R&S SMA100A"
 signal_carrier_frequency = 477999596 Hz
 signal_carrier_harmonic_number = 148
 #signal_filter = "none"
-
+signal_power_loss = 6.8 dB
 
 # ==============
 # EXTERNAL CLOCK
@@ -101,6 +101,8 @@ rffe_board_version = rffe_v2_476MHz                                             
 #rffe_board_serialnumber = xxxxxxxxx
 rffe_board_external_attenuator = 0 dB
 rffe_external_gain = 0 dB
+rffe_power_threshold = 0 dBm
+rffe_gain = 17 dB
 
 # =========================
 # DIGITAL SIGNAL PROCESSING
