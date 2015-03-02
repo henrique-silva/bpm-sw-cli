@@ -63,10 +63,11 @@ def run_single(argv):
                     board_path = 'board'+str(board_number)
                     bpm_path = 'bpm'+str(bpm_number)
 
-                    #Replace the dot in power level string with an underline, to avoid problems when creating the folder
+                    #Replace the dot and space in power level string with an underline to avoid problems when creating the folder
                     power_level = exp.metadata['rffe_signal_carrier_inputpower'].replace(".","_")
+                    power_level = power_level.replace(" ","_")
 
-                    print('        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+'...')
+                    print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+'...')
                     while True:
                         data_filenames = []
                         for datapath in args.datapath:
