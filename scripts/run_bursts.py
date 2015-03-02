@@ -58,8 +58,11 @@ while True:
             for board_nmb in args.board:
                 for bpm_nmb in args.bpm:
                     pow_sweep_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
-
-        run_pow_sweep(pow_sweep_args)
+        try:
+            run_pow_sweep(pow_sweep_args)
+        except OSError as e:
+            print (e)
+            break
 
     else:
         print('Unknown experiment type: '+args.runtype)
