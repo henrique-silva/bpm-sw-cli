@@ -62,8 +62,6 @@ class BPMExperiment():
         command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
         command_argument_list.extend(['--setswdly', deswitching_phase_offset])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
-        
-        #command_argument_list.extend(['-v'])
 
         if self.metadata['bpm_Kx']:
             command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
@@ -100,7 +98,6 @@ class BPMExperiment():
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
             command_argument_list.extend(['--rffesetsw', self.metadata['rffe_switching'].split()[0]])
-            #command_argument_list.extend(['-v'])
 
             if self.metadata['signal_source'].split()[0] == 'signalgenerator':
                 att_items = self.metadata['rffe_attenuators'].split(',')
@@ -133,7 +130,7 @@ class BPMExperiment():
             command_argument_list.extend(['--board', board])
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
-            #command_argument_list.extend(['-v'])
+
             rffe_temp = [0] * 4
             for chan in range(1,5):
                 command_argument_list.extend(['--rffegettemp', '-chan='+str(chan)])
@@ -154,7 +151,7 @@ class BPMExperiment():
         command_argument_list.extend(['--bpm', bpm])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
         command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
-        #command_argument_list.extend(['-v'])
+
         if not self.debug:
             subprocess.call(command_argument_list)
         else:
@@ -175,7 +172,6 @@ class BPMExperiment():
         command_argument_list.extend(['--timeout', '10'])
         command_argument_list.extend(['--fullacq'])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
-        #command_argument_list.extend(['-v'])
 
         # Ensure file path exists
         path = os.path.dirname(data_filename)
