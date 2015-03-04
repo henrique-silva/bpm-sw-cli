@@ -7,6 +7,7 @@ import argparse
 from run_single import run_single
 from run_pow_sweep import run_pow_sweep
 from run_sweep import run_sweep
+from run_sweep_sausaging import run_sweep_sausaging
 from bpm_experiment import BPMExperiment
 
 parser = argparse.ArgumentParser()
@@ -19,10 +20,10 @@ parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the r
 parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
 parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
 parser.add_argument('-m','--minutes', type=float, help='amount of minutes between each test', default=1)
-parser.add_argument('-t','--runtype', help='desired type of test', default='single', choices=['single','sweep','pow_sweep'])
-parser.add_argument('-i','--start', help='sweep initial power', type=int,default=-60)
-parser.add_argument('-n','--stop', help='sweep final power', type=int, default=0)
-parser.add_argument('-s','--step', help='sweep power step', type=int, default=10)
+parser.add_argument('-t','--runtype', help='desired type of test', default='single', choices=['single','sweep','pow_sweep','sweep_sausaging'])
+parser.add_argument('-i','--start', help='sweep initial value', type=int,default=-60)
+parser.add_argument('-n','--stop', help='sweep final value', type=int, default=0)
+parser.add_argument('-s','--step', help='sweep step', type=int, default=10)
 parser.add_argument('-w','--dspsweep', action='store_true', help='run the script for all boards and bpms', default=False)
 parser.add_argument('-f','--rffesweep', action='store_true', help='run the script for all boards and bpms', default=False)
 args = parser.parse_args()
@@ -86,6 +87,22 @@ while True:
                     sweep_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
         try:
             run_sweep(sweep_args)
+        except OSError as e:
+            print (e)
+            break
+
+    elif args.runtype == 'sweep_sausaging':
+        sweep_sausaging_args = [args.metadata, args.output, '-i', str(args.start), '-n', str(args.stop), '-t', str(args.step), '-e' ,args.endpoint, '-s']
+        if args.allboards:
+            sweep_sausaging_args.extend(['-a'])
+        for datapath in args.datapath:
+            sweep_sausaging_args.extend(['-p', datapath])
+        else:
+            for board_nmb in args.board:
+                for bpm_nmb in args.bpm:
+                    sweep_sausaging_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
+        try:
+            run_sweep_sausaging(sweep_sausaging_args)
         except OSError as e:
             print (e)
             break
