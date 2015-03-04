@@ -74,7 +74,7 @@ def run_sweep(argv):
                 rffe_attenuators_sweep = range(0,31,7)
 
             elif 'rffe_v2' in exp.metadata['rffe_board_version']:
-                rffe_attenuators_sweep = range(0,31,30)
+                rffe_attenuators_sweep = range(0,31,5)
 
             else:
                 print('Unknown version of RFFE. Ending experiment...\n')

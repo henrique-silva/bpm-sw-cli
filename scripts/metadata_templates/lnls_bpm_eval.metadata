@@ -11,6 +11,7 @@ signal_carrier_harmonic_number = 148
 #signal_filter = "none"
 signal_power_loss = 6.8 dB
 
+
 # ==============
 # EXTERNAL CLOCK
 # ==============
