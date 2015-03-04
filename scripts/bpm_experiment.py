@@ -60,12 +60,17 @@ class BPMExperiment():
         command_argument_list.extend(['--board', board])
         command_argument_list.extend(['--bpm', bpm])
         command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
-        command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
-        command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
         command_argument_list.extend(['--setswdly', deswitching_phase_offset])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
         
         #command_argument_list.extend(['-v'])
+
+        if self.metadata['bpm_Kx']:
+            command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
+
+        if self.metadata['bpm_Ky']:
+            command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
+
         if self.metadata['dsp_sausaging'].split()[0] == 'on':
             dsp_sausaging = '1'
         else:
