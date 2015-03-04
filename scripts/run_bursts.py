@@ -40,7 +40,9 @@ while True:
     print('======================================================')
 
     if args.runtype == 'single':
-        single_args = [args.metadata, args.datapath, '-e' ,args.endpoint, '-s']
+        single_args = [args.metadata, args.output, '-e' ,args.endpoint, '-s']
+        for datapath in args.datapath:
+            single_args.extend(['-p', datapath])
         if args.allboards:
             single_args.extend(['-a'])
         else:
@@ -53,7 +55,7 @@ while True:
         if not (args.start and args.stop and args.step):
             print ("Power sweep arguments not provided! Aborting operation...")
             break
-        pow_sweep_args = [args.metadata, args.datapath, str(args.start), str(args.stop), str(args.step), '-e' ,args.endpoint]
+        pow_sweep_args = [args.metadata, args.output, str(args.start), str(args.stop), str(args.step), '-e' ,args.endpoint]
         if args.rffeconfig:
             pow_sweep_args.extend(['-r'])
         if args.allboards:
