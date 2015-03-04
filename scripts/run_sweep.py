@@ -18,8 +18,8 @@ def run_sweep(argv):
     parser.add_argument('-s','--silent', action='store_true', help='run the script without asking for confirmation', default=False)
     parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
-    parser.add_argument('-w','--dspsweep', action='store_true', help='run the script for all boards and bpms', default=False)
-    parser.add_argument('-f','--rffesweep', action='store_true', help='run the script for all boards and bpms', default=False)
+    parser.add_argument('-w','--dspsweep', action='store_true', help='sweep the dsp switching', default=False)
+    parser.add_argument('-f','--rffesweep', action='store_true', help='sweep the rffe switching', default=False)
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
