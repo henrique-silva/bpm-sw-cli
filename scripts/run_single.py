@@ -71,7 +71,10 @@ def run_single(argv):
                     while True:
                         data_filenames = []
                         for datapath in args.datapath:
-                            data_filenames.append(os.path.join(os.path.normpath(args.output), date, board_path, bpm_path, power_level, datapath, 'data_' + str(ntries) + '_' + datapath + '.txt'))
+                            if exp.metadata['signal_source'] == 'signalgenerator':
+                                data_filenames.append(os.path.join(os.path.normpath(args.output), date, board_path, bpm_path, power_level, datapath, 'data_' + str(ntries) + '_' + datapath + '.txt'))
+                            else:
+                                data_filenames.append(os.path.join(os.path.normpath(args.output), date, board_path, bpm_path, datapath, 'data_' + str(ntries) + '_' + datapath + '.txt'))
                         ntries = ntries+1
                         if all(not os.path.exists(data_filename) for data_filename in data_filenames):
                             break
