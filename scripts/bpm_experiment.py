@@ -11,7 +11,7 @@ from metadata_parser import MetadataParser
 
 class BPMExperiment():
 
-    def __init__(self, broker_endpoint = 'ipc:///tmp/bpm', binpath = './client', debug = False):
+    def __init__(self, broker_endpoint = 'ipc:///tmp/bpm', binpath = '../client', debug = False):
         self.broker_endpoint = broker_endpoint
         self.debug = debug
         self.metadata_parser = MetadataParser()
