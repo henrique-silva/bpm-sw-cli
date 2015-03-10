@@ -185,7 +185,7 @@ class BPMExperiment():
 
         with open(data_filename, 'x') as f:
             if not self.debug:
-                p = subprocess.call(command_argument_list, stdout=f, timeout=1)
+                p = subprocess.call(command_argument_list, stdout=f)
             else:
                 f.writelines(['10 11 -9 80\n54 5 6 98\n']);
                 print(' '.join(command_argument_list))
