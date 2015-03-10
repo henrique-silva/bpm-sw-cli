@@ -32,7 +32,7 @@ class BPMExperiment():
             lines.append(key + ' = ' + self.metadata[key] + '\n')
         return lines
 
-    def run(self, data_filename, datapath, board, bpm, rffe_config=True):
+    def run(self, data_filename, datapath, board, bpm, fmc_config=False, rffe_config=False):
         if datapath == 'adc':
             data_rate_decimation_ratio = '1'
             acq_channel = '0'
@@ -55,108 +55,110 @@ class BPMExperiment():
         rffe_switching_frequency_ratio = str(int(self.metadata['rffe_switching_frequency_ratio'].split()[0])/2 - 4)
 
         import subprocess
-        # Run FPGA configuration commands
-        command_argument_list = [self.binpath]
-        command_argument_list.extend(['--board', board])
-        command_argument_list.extend(['--bpm', bpm])
-        command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
-        command_argument_list.extend(['--setswdly', deswitching_phase_offset])
-        command_argument_list.extend(['--endpoint', self.broker_endpoint])
-
-        if self.metadata['bpm_Kx']:
-            command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
-
-        if self.metadata['bpm_Ky']:
-            command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
-
-        if self.metadata['dsp_sausaging'].split()[0] == 'on':
-            dsp_sausaging = '1'
-        else:
-            dsp_sausaging = '0'
-        command_argument_list.extend(['--setwdwen', dsp_sausaging ])
-
-        if self.metadata['rffe_switching'].split()[0] == 'on':
-            rffe_switching = '1'
-        else:
-            rffe_switching = '0'
-        command_argument_list.extend(['--setsw', rffe_switching])
-
-        if not self.debug:
-            #Use timeout here to identify if the board is responsive
-            try:
-                subprocess.call(command_argument_list, timeout=1)
-            except subprocess.TimeoutExpired:
-            #If the board doesn't respond, abort the call
-                raise BoardTimeout
-        else:
-            print(' '.join(command_argument_list))
-
-        if rffe_config:
-            # Run RFFE configuration commands
+        
+        if fmc_config:
+            # Run FPGA configuration commands
             command_argument_list = [self.binpath]
             command_argument_list.extend(['--board', board])
             command_argument_list.extend(['--bpm', bpm])
+            command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
+            command_argument_list.extend(['--setswdly', deswitching_phase_offset])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
-            command_argument_list.extend(['--rffesetsw', self.metadata['rffe_switching'].split()[0]])
-
-            if self.metadata['signal_source'].split()[0] == 'signalgenerator':
-                att_items = self.metadata['rffe_attenuators'].split(',')
-                natt = len(att_items)
-                rffe_gain = float(self.metadata['rffe_gain'].split()[0])
-                rffe_input_power = float(self.metadata['rffe_signal_carrier_inputpower'].split()[0])
-                rffe_power_threshold = float(self.metadata['rffe_power_threshold'].split()[0])
-                i = 1
-                for att_value in att_items:
-                    att_value = float(att_value.strip()[0])
-                    power_level = rffe_input_power + rffe_gain - att_value
-                    if power_level > rffe_power_threshold:
-                        raise OverPowerError(power_level)
-                    command_argument_list.extend(['--rffesetatt', 'chan=' + str(i) + ',value=' + str(att_value)])
-                    i = i+1
-
+    
+            if self.metadata['bpm_Kx']:
+                command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
+    
+            if self.metadata['bpm_Ky']:
+                command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
+    
+            if self.metadata['dsp_sausaging'].split()[0] == 'on':
+                dsp_sausaging = '1'
+            else:
+                dsp_sausaging = '0'
+            command_argument_list.extend(['--setwdwen', dsp_sausaging ])
+    
+            if self.metadata['rffe_switching'].split()[0] == 'on':
+                rffe_switching = '1'
+            else:
+                rffe_switching = '0'
+            command_argument_list.extend(['--setsw', rffe_switching])
+    
             if not self.debug:
-            #Use timeout here to identify if the RFFE is responsive
+                #Use timeout here to identify if the board is responsive
                 try:
-                    subprocess.call(command_argument_list, timeout=5)
-                    sleep(0.2) # FIXME: it seems RFFE controller (mbed) doesn't realize the connection has been closed
+                    subprocess.call(command_argument_list, timeout=1)
                 except subprocess.TimeoutExpired:
-                #If the RFFE doesn't respond, abort the call
-                    raise RFFETimeout
+                #If the board doesn't respond, abort the call
+                    raise BoardTimeout
             else:
                 print(' '.join(command_argument_list))
-
-            # Read RFFE temperature
-            command_argument_list = [self.binpath]
-            command_argument_list.extend(['--board', board])
-            command_argument_list.extend(['--bpm', bpm])
-            command_argument_list.extend(['--endpoint', self.broker_endpoint])
-
-            rffe_temp = [0] * 4
-            for chan in range(1,5):
-                command_argument_list.extend(['--rffegettemp', '-chan='+str(chan)])
+    
+            if rffe_config:
+                # Run RFFE configuration commands
+                command_argument_list = [self.binpath]
+                command_argument_list.extend(['--board', board])
+                command_argument_list.extend(['--bpm', bpm])
+                command_argument_list.extend(['--endpoint', self.broker_endpoint])
+                command_argument_list.extend(['--rffesetsw', self.metadata['rffe_switching'].split()[0]])
+    
+                if self.metadata['signal_source'].split()[0] == 'signalgenerator':
+                    att_items = self.metadata['rffe_attenuators'].split(',')
+                    natt = len(att_items)
+                    rffe_gain = float(self.metadata['rffe_gain'].split()[0])
+                    rffe_input_power = float(self.metadata['rffe_signal_carrier_inputpower'].split()[0])
+                    rffe_power_threshold = float(self.metadata['rffe_power_threshold'].split()[0])
+                    i = 1
+                    for att_value in att_items:
+                        att_value = float(att_value.strip()[0])
+                        power_level = rffe_input_power + rffe_gain - att_value
+                        if power_level > rffe_power_threshold:
+                            raise OverPowerError(power_level)
+                        command_argument_list.extend(['--rffesetatt', 'chan=' + str(i) + ',value=' + str(att_value)])
+                        i = i+1
+    
                 if not self.debug:
+                #Use timeout here to identify if the RFFE is responsive
                     try:
                         subprocess.call(command_argument_list, timeout=5)
                         sleep(0.2) # FIXME: it seems RFFE controller (mbed) doesn't realize the connection has been closed
                     except subprocess.TimeoutExpired:
+                    #If the RFFE doesn't respond, abort the call
                         raise RFFETimeout
                 else:
                     print(' '.join(command_argument_list))
-
-        # TODO: Check if everything was properly set
-
-        # Enable switching signal
-        command_argument_list = [self.binpath]
-        command_argument_list.extend(['--board', board])
-        command_argument_list.extend(['--bpm', bpm])
-        command_argument_list.extend(['--endpoint', self.broker_endpoint])
-        command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
-
-        if not self.debug:
-            subprocess.call(command_argument_list)
-        else:
-            print(' '.join(command_argument_list))
-
+    
+                # Read RFFE temperature
+                command_argument_list = [self.binpath]
+                command_argument_list.extend(['--board', board])
+                command_argument_list.extend(['--bpm', bpm])
+                command_argument_list.extend(['--endpoint', self.broker_endpoint])
+    
+                rffe_temp = [0] * 4
+                for chan in range(1,5):
+                    command_argument_list.extend(['--rffegettemp', '-chan='+str(chan)])
+                    if not self.debug:
+                        try:
+                            subprocess.call(command_argument_list, timeout=5)
+                            sleep(0.2) # FIXME: it seems RFFE controller (mbed) doesn't realize the connection has been closed
+                        except subprocess.TimeoutExpired:
+                            raise RFFETimeout
+                    else:
+                        print(' '.join(command_argument_list))
+    
+            # TODO: Check if everything was properly set
+    
+            # Enable switching signal
+            command_argument_list = [self.binpath]
+            command_argument_list.extend(['--board', board])
+            command_argument_list.extend(['--bpm', bpm])
+            command_argument_list.extend(['--endpoint', self.broker_endpoint])
+            command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
+    
+            if not self.debug:
+                subprocess.call(command_argument_list)
+            else:
+                print(' '.join(command_argument_list))
+    
         # Timestamp the start of data acquisition
         # FIXME: timestamp should ideally come together with data.
         t = time()
@@ -183,7 +185,12 @@ class BPMExperiment():
 
         with open(data_filename, 'x') as f:
             if not self.debug:
-                p = subprocess.call(command_argument_list, stdout=f)
+                #Use timeout here to identify if the board is responsive
+                try:
+                    p = subprocess.call(command_argument_list, stdout=f, timeout=1)
+                except subprocess.TimeoutExpired:
+                #If the board doesn't respond, abort the call
+                    raise BoardTimeout
             else:
                 f.writelines(['10 11 -9 80\n54 5 6 98\n']);
                 print(' '.join(command_argument_list))

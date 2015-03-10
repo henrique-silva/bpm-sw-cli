@@ -20,6 +20,7 @@ def run_single(argv):
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
     parser.add_argument('-t','--temperature', action='store_true', help='enable rack temperature reading', default=False)
+    parser.add_argument('-f','--fmcconfig', action='store_true', help='perform only the acquisition, not configuring the FMC board', default=False)
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
@@ -84,7 +85,7 @@ def run_single(argv):
                         print('        Running ' + args.datapath[i] + ' datapath...')
                         sys.stdout.flush()
                         try:
-                            exp.run(data_filenames[i], args.datapath[i], str(board_number), str(bpm_number), args.rffeconfig)
+                            exp.run(data_filenames[i], args.datapath[i], str(board_number), str(bpm_number), args.fmcconfig, args.rffeconfig)
                         except bpm_experiment.OverPowerError as e:
                             print ('The power level '+str(e.value)+' will damage the RFFE so it\'ll be skipped!')
                             continue
