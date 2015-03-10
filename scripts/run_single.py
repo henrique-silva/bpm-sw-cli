@@ -19,6 +19,7 @@ def run_single(argv):
     parser.add_argument('-s','--silent', action='store_true', help='run the script without asking for confirmation', default=False)
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
+    parser.add_argument('-t','--temperature', action='store_true', help='enable rack temperature reading', default=False)
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
@@ -42,10 +43,11 @@ def run_single(argv):
         print('EXPERIMENT SETTINGS:')
         print('====================')
 
-        temp, hum, dew = sensor.read_all()
-        exp.metadata['rack_temperature'] = str(temp)+' C'
-        exp.metadata['rack_humidity'] = str(hum)+' %'
-        exp.metadata['rack_dew_point'] = str(dew)+' C'
+        if args.temperature:
+            temp, hum, dew = sensor.read_all()
+            exp.metadata['rack_temperature'] = str(temp)+' C'
+            exp.metadata['rack_humidity'] = str(hum)+' %'
+            exp.metadata['rack_dew_point'] = str(dew)+' C'
 
         print(''.join(sorted(exp.get_metadata_lines())))
 
