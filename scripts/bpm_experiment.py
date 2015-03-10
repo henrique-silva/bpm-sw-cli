@@ -36,17 +36,17 @@ class BPMExperiment():
         if datapath == 'adc':
             data_rate_decimation_ratio = '1'
             acq_channel = '0'
-            acq_npts = '100000'
+            acq_npts = '1000000'
             data_file_structure = 'bpm_amplitudes_if'
         elif datapath == 'tbt':
             data_rate_decimation_ratio = self.metadata['adc_clock_sampling_harmonic'].split()[0] # FIXME: data_rate_decim_factor should be ideally read from FPGA
-            acq_channel = '2'
-            acq_npts = '100000'
+            acq_channel = '3'
+            acq_npts = '1000000'
             data_file_structure = 'bpm_amplitudes_baseband'
         elif datapath == 'fofb':
             data_rate_decimation_ratio = '1000' # FIXME: data_rate_decim_factor should be ideally read from FPGA
-            acq_channel = '4'
-            acq_npts = '500000'
+            acq_channel = '5'
+            acq_npts = '1000000'
             data_file_structure = 'bpm_amplitudes_baseband'
 
         deswitching_phase_offset = str(int(self.metadata['dsp_deswitching_phase'].split()[0]) - int(self.metadata['rffe_switching_phase'].split()[0]))
