@@ -399,18 +399,16 @@ int main (int argc, char *argv [])
         rffegetsw,
         rffesetatt,
         rffegetatt,
-        rffesettmp,
-        rffegettmp,
+        rffesettemp,
+        rffegettemp,
         rffesetpnt,
         rffegetpnt,
-        rffesettmpctr,
-        rffegettmpctr,
+        rffesettempctr,
+        rffegettempctr,
         rffesetout,
         rffegetout,
-        rffesetrst,
-        rffegetrst,
-        rffesetrpg,
-        rffegetrpg,
+        rffereset,
+        rfferpg,
         rffesetswlvl,
         rffegetswlvl,
         acqcheckpoll,
@@ -515,18 +513,16 @@ int main (int argc, char *argv [])
         {"rffegetsw",           no_argument,         NULL, rffegetsw},
         {"rffesetatt",          required_argument,   NULL, rffesetatt},
         {"rffegetatt",          required_argument,   NULL, rffegetatt},
-        {"rffesettmp",          required_argument,   NULL, rffesettmp},
-        {"rffegettmp",          required_argument,   NULL, rffegettmp},
+        {"rffesettemp",         required_argument,   NULL, rffesettemp},
+        {"rffegettemp",         required_argument,   NULL, rffegettemp},
         {"rffesetpnt",          required_argument,   NULL, rffesetpnt},
         {"rffegetpnt",          required_argument,   NULL, rffegetpnt},
-        {"rffesettmpctr",       required_argument,   NULL, rffesettmpctr},
-        {"rffegettmpctr",       no_argument,         NULL, rffegettmpctr},
+        {"rffesettempctr",      required_argument,   NULL, rffesettempctr},
+        {"rffegettempctr",      no_argument,         NULL, rffegettempctr},
         {"rffesetout",          required_argument,   NULL, rffesetout},
         {"rffegetout",          required_argument,   NULL, rffegetout},
-        {"rffesetrst",          required_argument,   NULL, rffesetrst},
-        {"rffegetrst",          no_argument,         NULL, rffegetrst},
-        {"rffesetrpg",          required_argument,   NULL, rffesetrpg},
-        {"rffegetrpg",          no_argument,         NULL, rffegetrpg},
+        {"rffereset",           required_argument,   NULL, rffereset},
+        {"rfferpg",             required_argument,   NULL, rfferpg},
         {"rffesetswlvl",        required_argument,   NULL, rffesetswlvl},
         {"rffegetswlvl",        no_argument,         NULL, rffegetswlvl},
         {"setsamples",          required_argument,   NULL, 'E'},
@@ -1489,7 +1485,7 @@ int main (int argc, char *argv [])
                 break;
 
                 /* Set RFFE Temperature */
-            case rffesettmp:
+            case rffesettemp:
                 if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
                     fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
@@ -1503,7 +1499,7 @@ int main (int argc, char *argv [])
                 break;
 
                 /* Read RFFE Temperature */
-            case rffegettmp:
+            case rffegettemp:
                 if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
                     fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
@@ -1545,7 +1541,7 @@ int main (int argc, char *argv [])
                 break;
 
                 /* Set RFFE Temperature Control */
-            case rffesettmpctr:
+            case rffesettempctr:
                 item.name = RFFE_NAME_SET_GET_TEMP_CONTROL;
                 item.service = RFFE_MODULE_NAME;
                 item.rw = 0;
@@ -1555,7 +1551,7 @@ int main (int argc, char *argv [])
                 break;
 
                 /* Get RFFE Temperature Control */
-            case rffegettmpctr:
+            case rffegettempctr:
                 item.name = RFFE_NAME_SET_GET_TEMP_CONTROL;
                 item.service = RFFE_MODULE_NAME;
                 item.rw = 1;
@@ -1591,8 +1587,8 @@ int main (int argc, char *argv [])
                 free(item.name);
                 break;
 
-                /* Set RFFE Reset */
-            case rffesetrst:
+                /* RFFE Reset */
+            case rffereset:
                 item.name = RFFE_NAME_SET_GET_RESET;
                 item.service = RFFE_MODULE_NAME;
                 item.rw = 0;
@@ -1601,31 +1597,13 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
-                /* Get RFFE Reset */
-            case rffegetrst:
-                item.name = RFFE_NAME_SET_GET_RESET;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
-                append_item (call_list, item);
-                break;
-
-                /* Set RFFE Reprog */
-            case rffesetrpg:
+                /* RFFE Reprogram */
+            case rfferpg:
                 item.name = RFFE_NAME_SET_GET_REPROG;
                 item.service = RFFE_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get RFFE Reprog */
-            case rffegetrpg:
-                item.name = RFFE_NAME_SET_GET_REPROG;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
