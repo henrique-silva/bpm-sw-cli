@@ -121,12 +121,13 @@ int print_var (call_var_t *var)
             printf ("%" PRIu64 "\n", *(read_val_ptr64));
             break;
 
-        case DISP_ATYPE_DOUBLE:
-            printf ("%f\n", (double)*(var->read_val));
+        case DISP_ATYPE_DOUBLE:;
+            double* read_val_ptr_dbl = (double *)var->read_val;
+            printf ("%f\n", *(read_val_ptr_dbl));
             break;
 
         default:
-            printf ("%" PRIu8 "\n", ((uint8_t )*(var->read_val)));
+            printf ("%" PRIu16 "\n", ((uint16_t )*(var->read_val)));
     }
     return 0;
 }
