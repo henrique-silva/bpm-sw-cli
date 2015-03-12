@@ -24,7 +24,7 @@ def run_sweep_sausaging(argv):
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
-    sensor = TH2E('10.0.18.210')
+    sensor = TH2E('10.2.117.254')
 
     if not args.board:
         args.board = '0'
