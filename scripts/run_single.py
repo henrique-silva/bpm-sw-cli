@@ -20,7 +20,7 @@ def run_single(argv):
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
     parser.add_argument('-t','--temperature', action='store_true', help='enable rack temperature reading', default=False)
-    parser.add_argument('-f','--fmcconfig', action='store_true', help='perform only the acquisition, not configuring the FMC board', default=False)
+    parser.add_argument('-c','--fmcconfig', action='store_true', help='perform only the acquisition, not configuring the FMC board', default=False)
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)

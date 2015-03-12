@@ -17,6 +17,7 @@ parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10
 parser.add_argument('-d','--board', type=int, help='select the target board for the test', action='append')
 parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
 parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
+parser.add_argument('-c','--fmcconfig', action='store_true', help='enable the FMC configuration process', default=False)
 parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
 parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
 parser.add_argument('-m','--minutes', type=float, help='amount of minutes between each test', default=1)
@@ -50,6 +51,8 @@ while True:
             single_args.extend(['-d', str(args.board),'-b', str(args.bpm)])
         if args.rffeconfig:
             single_args.extend(['-r'])
+        if args.fmcconfig:
+            single_args.extend(['-c'])
         run_single(single_args)
 
     elif args.runtype == 'pow_sweep':
