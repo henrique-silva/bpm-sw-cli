@@ -127,7 +127,7 @@ int print_var (call_var_t *var)
             break;
 
         default:
-            printf ("%" PRIu8 "\n", ((uint8_t )*(var->read_val)));
+            printf ("%" PRIu16 "\n", ((uint16_t )*(var->read_val)));
     }
     return 0;
 }
