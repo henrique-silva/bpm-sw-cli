@@ -2,7 +2,7 @@ import socket
 
 class RS_gen():
 
-    def __init__(self, ip = '10.0.18.52', port = 5025, buffer_size = 1024, timeout = 5):
+    def __init__(self, ip = '10.2.117.45', port = 5025, buffer_size = 1024, timeout = 5):
         self.ip = ip
         self.port = port
         self.buffer_size = buffer_size
