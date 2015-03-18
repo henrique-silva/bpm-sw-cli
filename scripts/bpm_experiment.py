@@ -79,13 +79,7 @@ class BPMExperiment():
             else:
                 dsp_sausaging = '0'
             command_argument_list.extend(['--setwdwen', dsp_sausaging ])
-    
-            if self.metadata['rffe_switching'].split()[0] == 'on':
-                rffe_switching = '1'
-            else:
-                rffe_switching = '0'
-            command_argument_list.extend(['--setsw', rffe_switching])
-    
+
             if not self.debug:
                 #Use timeout here to identify if the board is responsive
                 try:
@@ -155,8 +149,13 @@ class BPMExperiment():
             command_argument_list.extend(['--board', board])
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
+            
+            if self.metadata['rffe_switching'].split()[0] == 'on':
+                rffe_switching = '1'
+            else:
+                rffe_switching = '0'
             command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
-    
+
             if not self.debug:
                 subprocess.call(command_argument_list)
             else:
