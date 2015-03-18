@@ -352,7 +352,10 @@ int main (int argc, char *argv [])
 
     /* Long-only options */
     enum {
-        getadcrand = 1000,
+        pllstatus = 1000,
+        getclksel,
+        setclksel,
+        getadcrand,
         setadcrand,
         getadcdith,
         setadcdith,
@@ -427,9 +430,12 @@ int main (int argc, char *argv [])
         {"board",               required_argument,   NULL, 'd'},
         {"bpm",                 required_argument,   NULL, 'm'},
         {"leds",                required_argument,   NULL, 'l'},
+        {"pllstatus",           no_argument,         NULL, pllstatus},
         {"getpll",              no_argument,         NULL, 'p'},
         {"setpll",              required_argument,   NULL, 'P'},
         {"ad9510default",       no_argument,         NULL, 'L'},
+        {"getclksel",           no_argument,         NULL, getclksel},
+        {"setclksel",           required_argument,   NULL, setclksel},
         {"getadcrand",          no_argument,         NULL, getadcrand},
         {"setadcrand",          required_argument,   NULL, setadcrand},
         {"getadcdith",          no_argument,         NULL, getadcdith},
