@@ -33,21 +33,24 @@ class BPMExperiment():
         return lines
 
     def run(self, data_filename, datapath, board, bpm, fmc_config=False, rffe_config=False):
-        if datapath == 'adc':
-            data_rate_decimation_ratio = '1'
-            acq_channel = '0'
-            acq_npts = '1000000'
-            data_file_structure = 'bpm_amplitudes_if'
-        elif datapath == 'tbt':
-            data_rate_decimation_ratio = self.metadata['adc_clock_sampling_harmonic'].split()[0] # FIXME: data_rate_decim_factor should be ideally read from FPGA
-            acq_channel = '3'
-            acq_npts = '1000000'
-            data_file_structure = 'bpm_amplitudes_baseband'
-        elif datapath == 'fofb':
-            data_rate_decimation_ratio = '1000' # FIXME: data_rate_decim_factor should be ideally read from FPGA
-            acq_channel = '5'
-            acq_npts = '1000000'
-            data_file_structure = 'bpm_amplitudes_baseband'
+
+        acq = {'adc': {'chan': '0', 'samples': '1000000'}, 
+            'adcswap': {'chan': '1', 'samples': '1000000'},
+            'mixiq120':{'chan': '2', 'samples': '1000000'},
+            'mixiq340':{'chan': '3', 'samples': '1000000'},
+            'tbtdecimiq120':{'chan': '4', 'samples': '1000000'},
+            'tbtdecimiq340':{'chan': '5', 'samples': '1000000'},
+            'tbtamp':{'chan': '6', 'samples': '1000000'},
+            'tbtpha':{'chan': '7', 'samples': '1000000'},
+            'tbtpos':{'chan': '8', 'samples': '1000000'},
+            'fofbdecimiq120':{'chan': '9', 'samples': '1000000'},
+            'fofbdecimiq340':{'chan': '10', 'samples': '1000000'},
+            'fofbamp':{'chan': '11', 'samples': '1000000'},
+            'fofbpha':{'chan': '12', 'samples': '1000000'},
+            'fofbpos':{'chan': '13', 'samples': '1000000'},
+            'monitamp':{'chan': '14', 'samples': '1000000'},
+            'monitpos':{'chan': '15', 'samples': '1000000'},
+            'monit1pos':{'chan': '16', 'samples': '1000000'}}
 
         deswitching_phase_offset = str(int(self.metadata['dsp_deswitching_phase'].split()[0]) - int(self.metadata['rffe_switching_phase'].split()[0]))
 
@@ -168,8 +171,8 @@ class BPMExperiment():
         command_argument_list = [self.binpath]
         command_argument_list.extend(['--board', board])
         command_argument_list.extend(['--bpm', bpm])
-        command_argument_list.extend(['--setsamples', acq_npts])
-        command_argument_list.extend(['--setchan', acq_channel])
+        command_argument_list.extend(['--setsamples', acq[datapath]['samples']])
+        command_argument_list.extend(['--setchan', acq[datapath]['chan']])
         #TODO: Check if 10 seconds is enough time to the FOFB module finish its acquisition even with higher samples number
         command_argument_list.extend(['--timeout', '10'])
         command_argument_list.extend(['--fullacq'])
