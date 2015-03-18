@@ -601,6 +601,15 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
+                /* Get PLL Lock Status */
+            case pllstatus:
+                item.name = FMC130M_4CH_NAME_PLL_STATUS;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
                 /* AD9510 Defaults */
             case 'L':
                 item.name = FMC130M_4CH_NAME_AD9510_CFG_DEFAULTS;
