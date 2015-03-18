@@ -811,7 +811,7 @@ int main (int argc, char *argv [])
                 free(item.name);
                 break;
 
-                /* Set Test_data_en */
+                /* Set Test data on ADC */
             case 'N':
                 item.name = FMC130M_4CH_NAME_TEST_DATA_EN;
                 item.service = FMC130M_4CH_MODULE_NAME;
@@ -821,7 +821,7 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
-                /* Get Test_data_en */
+                /* Get Test data on ADC */
             case 'n':
                 item.name = FMC130M_4CH_NAME_TEST_DATA_EN;
                 item.service = FMC130M_4CH_MODULE_NAME;
