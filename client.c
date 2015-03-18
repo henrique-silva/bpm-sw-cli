@@ -618,6 +618,25 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
+                /* Get Clock Selection */
+            case getclksel:
+                item.name = FMC130M_4CH_NAME_CLK_SEL;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+                /* Set Clock Selection */
+            case setclksel:
+                item.name = FMC130M_4CH_NAME_CLK_SEL;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+                
                 /* Get ADC Rand */
             case getadcrand:
                 item.name = FMC130M_4CH_NAME_ADC_RAND;
