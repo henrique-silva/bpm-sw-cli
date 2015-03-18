@@ -160,7 +160,7 @@ class BPMExperiment():
                 subprocess.call(command_argument_list)
             else:
                 print(' '.join(command_argument_list))
-    
+
         # Timestamp the start of data acquisition
         # FIXME: timestamp should ideally come together with data.
         t = time()
