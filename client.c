@@ -1772,7 +1772,7 @@ int main (int argc, char *argv [])
     }
 
     if (acq_chan_set && (acq_chan_val >= END_CHAN_ID)) {
-        fprintf(stderr, "%s: Invalid channel selected! This value must be lower than %u \n", program_name, END_CHAN_ID);
+        fprintf(stderr, "%s: Invalid channel selected! This value must be lower than %u \n", program_name, END_CHAN_ID-1);
         exit(EXIT_FAILURE);
     }
 
