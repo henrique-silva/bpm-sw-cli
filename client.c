@@ -44,7 +44,7 @@
 void print_data_curve (uint32_t chan, uint32_t *data, uint32_t size)
 {
     /* FIXME: Make it more generic */
-    if (chan == 0) {
+    if ((chan == 0)| (chan == 1)) {
         int16_t *raw_data16 = (int16_t *) data;
         for (uint32_t i = 0; i < (size/sizeof(uint16_t)) / 4; i++) {
             if (zctx_interrupted) {
