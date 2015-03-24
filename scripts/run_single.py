@@ -24,7 +24,6 @@ def run_single(argv):
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
-    sensor = TH2E('10.2.117.254')
 
     if not args.board:
         args.board = '0'
@@ -45,6 +44,7 @@ def run_single(argv):
         print('====================')
 
         if args.temperature:
+            sensor = TH2E('10.2.117.254')
             temp, hum, dew = sensor.read_all()
             exp.metadata['rack_temperature'] = str(temp)+' C'
             exp.metadata['rack_humidity'] = str(hum)+' %'
