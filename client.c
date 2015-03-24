@@ -51,7 +51,7 @@ void print_data_curve (uint32_t chan, uint32_t *data, uint32_t size)
                 break;
             }
 
-            printf ("%6u\t %8d\t %8d\t %8d\t %8d\n", i,
+            printf ("%8d\t %8d\t %8d\t %8d\n",
                     raw_data16[(i*4)],
                     raw_data16[(i*4)+1],
                     raw_data16[(i*4)+2],
@@ -64,7 +64,7 @@ void print_data_curve (uint32_t chan, uint32_t *data, uint32_t size)
                 break;
             }
 
-            printf ("%6u\t %8d\t %8d\t %8d\t %8d\n", i,
+            printf ("%8d\t %8d\t %8d\t %8d\n",
                     raw_data32[(i*4)],
                     raw_data32[(i*4)+1],
                     raw_data32[(i*4)+2],
