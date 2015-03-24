@@ -20,10 +20,11 @@ def run_sweep(argv):
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
     parser.add_argument('-w','--dspsweep', action='store_true', help='sweep the dsp switching', default=False)
     parser.add_argument('-f','--rffesweep', action='store_true', help='sweep the rffe switching', default=False)
+    parser.add_argument('-t','--temperature', action='store_true', help='enable rack temperature reading', default=False)
+
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
-    sensor = TH2E('10.2.117.254')
 
     if not args.board:
         args.board = '0'
@@ -31,8 +32,8 @@ def run_sweep(argv):
         args.bpm = '0'
 
     if args.allboards:
-        board = ['0','1','2','3','4','5']
-        bpm = ['0','1']
+        board = range(0,12)
+        bpm = range(0,2)
     else:
         board = args.board
         bpm = args.bpm
@@ -53,10 +54,12 @@ def run_sweep(argv):
         print('EXPERIMENT SETTINGS:')
         print('====================')
 
-        temp, hum, dew = sensor.read_all()
-        exp.metadata['rack_temperature'] = str(temp)+' C'
-        exp.metadata['rack_humidity'] = str(hum)+' %'
-        exp.metadata['rack_dew_point'] = str(dew)+' C'
+        if args.temperature:
+            sensor = TH2E('10.2.117.254')
+            temp, hum, dew = sensor.read_all()
+            exp.metadata['rack_temperature'] = str(temp)+' C'
+            exp.metadata['rack_humidity'] = str(hum)+' %'
+            exp.metadata['rack_dew_point'] = str(dew)+' C'
         
         print(''.join(sorted(exp.get_metadata_lines())))
 
