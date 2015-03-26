@@ -113,7 +113,14 @@ dsp_sausaging_window = tukey
 dsp_sausaging_window_parameters = 1
 dsp_sausaging = off
 #dsp_firmware_version = xxxxxxxxx
-
+gain_aa = 0 dB
+gain_ac = 0 dB
+gain_cc = 0 dB
+gain_ca = 0 dB
+gain_bb = 0 dB
+gain_bd = 0 dB
+gain_dd = 0 dB
+gain_db = 0 dB
 
 # =======
 # GENERAL
