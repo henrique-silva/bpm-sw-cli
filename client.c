@@ -378,6 +378,15 @@ int main (int argc, char *argv [])
         settrigterm,
         gettrigval,
         settrigval,
+        getad9510plladiv,
+        getad9510pllbdiv,
+        getad9510pllpresc,
+        getad9510pllrdiv,
+        getad9510pllpdown,
+        getad9510mux,
+        getad9510cpcurr,
+        getad9510outputs,
+        getad9510pllclksel,
         setkx,
         getkx,
         setky,
@@ -467,14 +476,23 @@ int main (int argc, char *argv [])
         {"settrigterm",         required_argument,   NULL, settrigterm},
         {"gettrigval",          no_argument,         NULL, gettrigval},
         {"settrigval",          required_argument,   NULL, settrigval},
+        {"getad9510plladiv",    no_argument,         NULL, getad9510plladiv},
         {"setad9510plladiv",    required_argument,   NULL, 'a'},
+        {"getad9510pllbdiv",    no_argument,         NULL, getad9510pllbdiv},
         {"setad9510pllbdiv",    required_argument,   NULL, 'b'},
+        {"getad9510pllpresc",   no_argument,         NULL, getad9510pllpresc},
         {"setad9510pllpresc",   required_argument,   NULL, 'r'},
+        {"getad9510rdiv",       no_argument,         NULL, getad9510pllrdiv},
         {"setad9510rdiv",       required_argument,   NULL, 'R'},
-        {"setad9510pdown",      required_argument,   NULL, 'B'},
+        {"getad9510pllpdown",   no_argument,         NULL, getad9510pllpdown},
+        {"setad9510pllpdown",   required_argument,   NULL, 'B'},
+        {"getad9510mux",        no_argument,         NULL, getad9510mux},
         {"setad9510mux",        required_argument,   NULL, 'M'},
+        {"getad9510cpcurr",     no_argument,         NULL, getad9510cpcurr},
         {"setad9510cpcurr",     required_argument,   NULL, 'u'},
+        {"getad9510outputs",    no_argument,         NULL, getad9510outputs},
         {"setad9510outputs",    required_argument,   NULL, 'U'},
+        {"getad9510pllclksel",  no_argument,         NULL, getad9510pllclksel},
         {"setad9510pllclksel",  required_argument,   NULL, 'k'},
         {"setkx",               required_argument,   NULL, setkx},
         {"getkx",               no_argument,         NULL, getkx},
@@ -974,6 +992,15 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
+                
+                 /* Get AD9510 PLL A Divider */
+            case getad9510plladiv:
+                item.name = FMC130M_4CH_NAME_AD9510_PLL_A_DIV;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
 
                 /* Set AD9510 PLL B Divider */
             case 'b':
@@ -982,6 +1009,15 @@ int main (int argc, char *argv [])
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+                
+                 /* Get AD9510 PLL B Divider */
+            case getad9510pllbdiv:
+                item.name = FMC130M_4CH_NAME_AD9510_PLL_B_DIV;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
@@ -994,14 +1030,32 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
+                
+                 /* Get AD9510 PLL Prescaler */
+            case getad9510pllpresc:
+                item.name = FMC130M_4CH_NAME_AD9510_PLL_PRESCALER;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
 
                 /* Set AD9510 R Divider */
             case 'R':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_PRESCALER;
+                item.name = FMC130M_4CH_NAME_AD9510_R_DIV;
                 item.service = FMC130M_4CH_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+                
+                 /* Get AD9510 R Divider */
+            case getad9510pllrdiv:
+                item.name = FMC130M_4CH_NAME_AD9510_R_DIV;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
@@ -1014,6 +1068,15 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
+                
+                 /* Get AD9510 PLL PDown */
+            case getad9510pllpdown:
+                item.name = FMC130M_4CH_NAME_AD9510_PLL_PDOWN;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
 
                 /* Set AD9510 MUX Status */
             case 'M':
@@ -1022,6 +1085,15 @@ int main (int argc, char *argv [])
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+                
+                 /* Get AD9510 MUX Status */
+            case getad9510mux:
+                item.name = FMC130M_4CH_NAME_AD9510_MUX_STATUS;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
@@ -1034,6 +1106,15 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
+                
+                 /* Get AD9510 CP Current */
+            case getad9510cpcurr:
+                item.name = FMC130M_4CH_NAME_AD9510_CP_CURRENT;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
 
                 /* Set AD9510 Outputs */
             case 'U':
@@ -1044,6 +1125,15 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
+                
+                 /* Get AD9510 Outputs */
+            case getad9510outputs:
+                item.name = FMC130M_4CH_NAME_AD9510_OUTPUTS;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
 
                 /* Set AD9510 PLL Clock Select */
             case 'k':
@@ -1052,6 +1142,15 @@ int main (int argc, char *argv [])
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+                
+                 /* Get AD9510 PLL Clock Select */
+            case getad9510pllclksel:
+                item.name = FMC130M_4CH_NAME_AD9510_PLL_CLK_SEL;
+                item.service = FMC130M_4CH_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
