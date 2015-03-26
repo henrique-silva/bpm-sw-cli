@@ -96,7 +96,7 @@ rffe_signal_carrier_inputpower = -10 dBm
 rffe_attenuators = 20 dB                                                            # use colons to separate each attenuator value, where the first value indicate the first stage (from input to output) and so on
 rffe_switching = on
 rffe_switching_phase = 0
-rffe_switching_frequency_ratio = 490
+rffe_switching_frequency_ratio = 980
 rffe_switching_frequency_reference = adc_clock                                      # possible values: beam_revolution_frequency, adc_clock
 rffe_board_version = rffe_v2_476MHz                                                 # possible values: rffe_v1_476MHz, rffe_v2_476MHz, rffe_v1_500MHz, rffe_v2_500MHz
 #rffe_board_serialnumber = xxxxxxxxx
@@ -113,14 +113,14 @@ dsp_sausaging_window = tukey
 dsp_sausaging_window_parameters = 1
 dsp_sausaging = off
 #dsp_firmware_version = xxxxxxxxx
-gain_aa = 0 dB
-gain_ac = 0 dB
-gain_cc = 0 dB
-gain_ca = 0 dB
-gain_bb = 0 dB
-gain_bd = 0 dB
-gain_dd = 0 dB
-gain_db = 0 dB
+gain_aa = 32768
+gain_ac = 32768
+gain_cc = 32768
+gain_ca = 32768
+gain_bb = 32768
+gain_bd = 32768
+gain_dd = 32768
+gain_db = 32768
 
 # =======
 # GENERAL
