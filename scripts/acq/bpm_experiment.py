@@ -236,9 +236,8 @@ class BPMExperiment():
         config_automatic_lines = [];
         config_automatic_lines.append('data_original_filename = ' + data_filename_basename + '\n')
         config_automatic_lines.append('data_signature = ' + filesignature + '\n')
-        #config_automatic_lines.append('dsp_data_rate_decimation_ratio = ' + data_rate_decimation_ratio + '\n')
+        config_automatic_lines.append('dsp_data_rate_decimation_ratio = ' + rffe_switching_frequency_ratio + '\n')
         config_automatic_lines.append('timestamp_start = ' + timestamp_start + '\n')
-        #config_automatic_lines.append('data_file_structure = ' + data_file_structure + '\n')
         config_automatic_lines.append('data_file_format = ascii\n')
         if rffe_config:
             config_automatic_lines.append('rffe_board_temperature = '+rffe_temp[0]+' C, '+rffe_temp[1]+' C, '+rffe_temp[2]+' C, '+rffe_temp[3]+'\n')
