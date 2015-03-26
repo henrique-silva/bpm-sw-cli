@@ -1,0 +1,73 @@
+#=========================
+#General bench configuration
+#=========================
+ip_vna=10.0.18.54       #ip of the Network Analyzer
+ip_rffe=10.0.18.63      #ip of the RFFE board
+ip_rfsw=10.0.18.53      #ip of the RF switches board
+ip_sgen=10.0.18.33      #ip of the signal generator for the switching signal
+
+#==================
+#Test parameters values
+#==================
+att_value=30            #Attenuator value: standard configuration for fixed attenuation tests(dB)
+pow_value=-20           #Input power: Standard configuration for fixed power tests(dB)
+freq_center=476000000   #Center frequency. Unit: Hz
+freq_span=300000000     #Frequency Span. Unit: Hz
+n_points=1601           #Points for data Acquisition
+
+#=
+#S-parameters
+#=
+s11_ref=-13             #Reference value for S11(dB)
+s11_tolerance=1         #Tolerance on S11  +- the reference value(dB)
+s12_ref=-60             #Reference value for S12(dB)
+s12_tolerance=5         #Tolerance on S12  +- the reference value(dB)
+s21_ref=1.3             #Reference value for S21(dB)
+s21_tolerance=1         #Tolerance on S21 +- the reference value(dB)
+s22_ref=-18             #Reference value for S22(dB)
+s22_tolerance=1         #Tolerance on S22 +- around the reference value(dB)
+temp_ref=22             #Reference value for temperature(dB)
+
+#=
+#Crosstalk
+#=
+xtalk_ref=-36           #Reference value for Crosstalk(dB)
+xtalk_tolerance=2       #Tolerance on Xtalk  +- the reference value(dB)
+
+#=
+#Linearity
+#=
+linearity_tol=0.5         #Tolerance in the nonlinearity measurement(dB)
+
+#=
+#Att step
+#=
+att_sweep_step=5       #Select the step of the attenuators sweep test (dB)
+att_sweep_low=5        #Select the lower value of attenuation for the sweep test(dB)
+att_sweep_high=30       #Select the higher value of attenuation for the sweep test(dB)
+att_step_tol=0.2        #Attenuation step tolerance(dB)
+
+#=
+#Power sweep
+#=
+pow_sweep_ini=-45       #Initial Input Power for power sweep test(dB)
+pow_sweep_end=0         #End power for power sweep test(dB)
+pow_sweep_att=30        #Attenuation value for power sweep test(dB)
+pow_sweep_step=5       #Input power step for power sweep test(dB)
+
+#=
+#temperature
+#=
+temp_min=20             #minimmum acceptable temperature for the test(oC)
+temp_max=40             #maximmum acceptable temperature for the test(oC)
+
+#==================
+#Test select
+#==================
+att_sweep_test=run      #Select between "run" or "no"--> Attenuators test
+sw_test=run             #Select between "run" or "no"--> RF switches test
+power_sweep=run         #Select between "run" or "no"--> Power sweep test
+freq_response=run       #Select between "run" or "no"--> Frequency responde test
+xtalk=run               #Select between "run" or "no"--> Crosstalk test
+temp=run                #Select between "run" or "no"--> Temperature tests
+return_loss=run         #Select between "run" or "no"--> Return Loss tests
