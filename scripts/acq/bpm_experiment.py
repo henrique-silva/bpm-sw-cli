@@ -172,8 +172,8 @@ class BPMExperiment():
         command_argument_list.extend(['--bpm', bpm])
         command_argument_list.extend(['--setsamples', acq[datapath]['samples']])
         command_argument_list.extend(['--setchan', acq[datapath]['chan']])
-        #TODO: Check if 10 seconds is enough time to the FOFB module finish its acquisition even with higher samples number
-        command_argument_list.extend(['--timeout', '10'])
+        #TODO: Check if 15 seconds is enough time to the FOFB module finish its acquisition even with higher samples number
+        command_argument_list.extend(['--timeout', '15'])
         command_argument_list.extend(['--fullacq'])
         command_argument_list.extend(['--endpoint', self.broker_endpoint])
 
