@@ -52,13 +52,11 @@ class BPMExperiment():
             'monitpos':{'chan': '15', 'samples': '1000000'},
             'monit1pos':{'chan': '16', 'samples': '1000000'}}
 
+        rffe_switching_frequency_ratio = str(int(self.metadata['rffe_switching_frequency_ratio'].split()[0])/2)
         deswitching_phase_offset = str(int(self.metadata['dsp_deswitching_phase'].split()[0]) - int(self.metadata['rffe_switching_phase'].split()[0]))
 
-        # FIXME: should not divide by 2 and subtract 4 to make FPGA counter count right. FPGA must be corrected
-        rffe_switching_frequency_ratio = str(int(self.metadata['rffe_switching_frequency_ratio'].split()[0])/2 - 4)
-
         import subprocess
-        
+
         if fmc_config:
             # Run FPGA configuration commands
             command_argument_list = [self.binpath]
