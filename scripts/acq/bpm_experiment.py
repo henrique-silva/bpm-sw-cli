@@ -64,30 +64,38 @@ class BPMExperiment():
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--setdivclk', rffe_switching_frequency_ratio])
             command_argument_list.extend(['--setswdly', deswitching_phase_offset])
+            command_argument_list.extend(['--setgainaa', self.metadata['gain_aa'].split()[0]])
+            command_argument_list.extend(['--setgainac', self.metadata['gain_ac'].split()[0]])
+            command_argument_list.extend(['--setgaincc', self.metadata['gain_cc'].split()[0]])
+            command_argument_list.extend(['--setgainca', self.metadata['gain_ca'].split()[0]])
+            command_argument_list.extend(['--setgainbb', self.metadata['gain_bb'].split()[0]])
+            command_argument_list.extend(['--setgainbd', self.metadata['gain_bd'].split()[0]])
+            command_argument_list.extend(['--setgaindd', self.metadata['gain_dd'].split()[0]])
+            command_argument_list.extend(['--setgaindb', self.metadata['gain_db'].split()[0]])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
-    
+
             if self.metadata['bpm_Kx']:
                 command_argument_list.extend(['--setkx', self.metadata['bpm_Kx'].split()[0]])
-    
+
             if self.metadata['bpm_Ky']:
                 command_argument_list.extend(['--setky', self.metadata['bpm_Ky'].split()[0]])
-    
+
             if self.metadata['dsp_sausaging'].split()[0] == 'on':
                 dsp_sausaging = '1'
             else:
                 dsp_sausaging = '0'
-            command_argument_list.extend(['--setwdwen', dsp_sausaging ])
+            command_argument_list.extend(['--setwdwen', dsp_sausaging])
 
             if not self.debug:
                 #Use timeout here to identify if the board is responsive
                 try:
-                    subprocess.call(command_argument_list, timeout=1)
+                    subprocess.call(command_argument_list, timeout=5)
                 except subprocess.TimeoutExpired:
                 #If the board doesn't respond, abort the call
                     raise BoardTimeout
             else:
                 print(' '.join(command_argument_list))
-    
+
             if rffe_config:
                 # Run RFFE configuration commands
                 command_argument_list = [self.binpath]
