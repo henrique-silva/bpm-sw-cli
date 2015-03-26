@@ -147,21 +147,33 @@ class BPMExperiment():
                             raise RFFETimeout
                     else:
                         print(' '.join(command_argument_list))
-    
+
             # TODO: Check if everything was properly set
-    
-            # Enable switching signal
+
+            # Configure Switching options
             command_argument_list = [self.binpath]
             command_argument_list.extend(['--board', board])
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
-            
+
             if self.metadata['rffe_switching'].split()[0] == 'on':
                 rffe_switching = '1'
+                command_argument_list.extend(['--setsw', '3'])
             else:
                 rffe_switching = '0'
-            command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
+                command_argument_list.extend(['--setsw', '1'])
 
+            if not self.debug:
+                subprocess.call(command_argument_list)
+            else:
+                print(' '.join(command_argument_list))
+
+            #Enable switching signal
+            command_argument_list = [self.binpath]
+            command_argument_list.extend(['--board', board])
+            command_argument_list.extend(['--bpm', bpm])
+            command_argument_list.extend(['--endpoint', self.broker_endpoint])
+            command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
             if not self.debug:
                 subprocess.call(command_argument_list)
             else:
