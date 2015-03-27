@@ -156,11 +156,11 @@ class BPMExperiment():
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
 
-            if self.metadata['rffe_switching'].split()[0] == 'on':
-                rffe_switching = '1'
+            if 'on' in self.metadata['rffe_switching'].split()[0]:
+                rffe_sw = '1'
                 command_argument_list.extend(['--setsw', '3'])
             else:
-                rffe_switching = '0'
+                rffe_sw = '0'
                 command_argument_list.extend(['--setsw', '1'])
 
             if not self.debug:
@@ -173,7 +173,7 @@ class BPMExperiment():
             command_argument_list.extend(['--board', board])
             command_argument_list.extend(['--bpm', bpm])
             command_argument_list.extend(['--endpoint', self.broker_endpoint])
-            command_argument_list.extend(['--setswen', self.metadata['rffe_switching'].split()[0]])
+            command_argument_list.extend(['--setswen', rffe_sw])
             if not self.debug:
                 subprocess.call(command_argument_list)
             else:
