@@ -2083,9 +2083,11 @@ int main (int argc, char *argv [])
 
         bpm_client_err_e err = bpm_full_acq(bpm_client, acq_service, &acq_trans, poll_timeout);
 
-        if (err == BPM_CLIENT_SUCCESS) {
-            print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
+        if (err != BPM_CLIENT_SUCCESS) {
+            fprintf (stderr, "[client:acq]: %s\n", bpm_client_err_str(err));
+            exit(EXIT_FAILURE);
         }
+        print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
         fprintf (stderr, "[client:acq]: %s\n", bpm_client_err_str(err));
         acq_full_call = 0;
         free(valid_data);
