@@ -33,8 +33,8 @@ def run_sweep_sausaging(argv):
         args.bpm = '0'
 
     if args.allboards:
-        board = ['0','1','2','3','4','5']
-        bpm = ['0','1']
+        board = range(0,12,1)
+        bpm = range(0,2,1)
     else:
         board = args.board
         bpm = args.bpm
