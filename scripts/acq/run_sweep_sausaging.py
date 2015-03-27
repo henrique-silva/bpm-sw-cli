@@ -5,8 +5,6 @@ def run_sweep_sausaging(argv):
     import os
     import itertools
     import argparse
-    sys.path.append('../th2e/')
-    from TH2E import TH2E
     import bpm_experiment
 
     parser = argparse.ArgumentParser()
@@ -47,6 +45,8 @@ def run_sweep_sausaging(argv):
         exp.metadata['rffe_switching'] = 'on'
 
         if args.temperature:
+            sys.path.append('../th2e/')
+            from TH2E import TH2E
             sensor = TH2E('10.2.117.254')
             temp, hum, dew = sensor.read_all()
             exp.metadata['rack_temperature'] = str(temp)+' C'
