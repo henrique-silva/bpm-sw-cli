@@ -118,7 +118,7 @@ class BPMExperiment():
                             raise OverPowerError(power_level)
                         command_argument_list.extend(['--rffesetatt', 'chan=' + str(i) + ',value=' + str(att_value)])
                         i = i+1
-    
+
                 if not self.debug:
                 #Use timeout here to identify if the RFFE is responsive
                     try:
@@ -129,13 +129,13 @@ class BPMExperiment():
                         raise RFFETimeout
                 else:
                     print(' '.join(command_argument_list))
-    
+
                 # Read RFFE temperature
                 command_argument_list = [self.binpath]
                 command_argument_list.extend(['--board', board])
                 command_argument_list.extend(['--bpm', bpm])
                 command_argument_list.extend(['--endpoint', self.broker_endpoint])
-    
+
                 rffe_temp = [0] * 4
                 for chan in range(1,5):
                     command_argument_list.extend(['--rffegettemp', '-chan='+str(chan)])
