@@ -15,13 +15,17 @@ def run_pow_sweep(argv):
     parser.add_argument('start', help='sweep initial power', type=int,default=-60)
     parser.add_argument('stop', help='sweep final power', type=int, default=0)
     parser.add_argument('step', help='sweep power step', type=int, default=10)
-    parser.add_argument('-g','--genip', help='generator ip address', default='10.0.17.44')
-    parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.0.18.39:8888')
+    parser.add_argument('-g','--genip', help='generator ip address', default='10.2.117.45')
+    parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.2.117.47:8888')
     parser.add_argument('-d','--board', type=int, help='select the target board for the test', action='append')
     parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
     parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
     parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
-    parser.add_argument('-f','--frequency', type=float, help='set generator frequency', default=477999596)
+    parser.add_argument('-c','--frequency', type=float, help='set generator frequency', default=477999596)
+    parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
+    parser.add_argument('-f','--afc', help='AFC Board name', default='AFC1')
+    parser.add_argument('-m','--fmc', help='FMC Board name', default='V3P1')
+
     args = parser.parse_args(argv)
 
     exp = BPMExperiment(args.endpoint)
@@ -50,12 +54,13 @@ def run_pow_sweep(argv):
         #Use a temporary metadata to pass the input power to the called functions
         exp.load_from_metadata(args.metadata)
         exp.metadata['rffe_signal_carrier_inputpower'] = str(Pout-loss) + ' dBm'
+        exp.metadata['signal_source'] = 'signalgenerator'
         with open(args.metadata+'.temp','w') as temp:
             temp.writelines(''.join(sorted(exp.get_metadata_lines())))
             temp.append('circuit_power_loss = '+str(loss)+' dB')
             temp_path = os.path.abspath(temp.name)
 
-        single_args = [temp_path, args.output, '-e' ,args.endpoint, '-p', 'fofb', '-s']
+        single_args = [temp_path, args.output, '-e' ,args.endpoint, '-s', '--fmcconfig', '--afc', args.afc, '--fmc', args.fmc]
         if args.rffeconfig:
             single_args.extend(['-r'])
         if args.allboards:
@@ -64,6 +69,9 @@ def run_pow_sweep(argv):
             for board_nmb in args.board:
                 for bpm_nmb in args.bpm:
                     single_args.extend(['-d', str(board_nmb),'-b', str(bpm_nmb)])
+        for dp in args.datapath:
+            single_args.extend(['-p', dp])
+
         run_single(single_args)
         os.remove(temp_path)
 
