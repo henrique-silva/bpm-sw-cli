@@ -22,7 +22,7 @@ def run_single(argv):
     parser.add_argument('-t','--temperature', action='store_true', help='enable rack temperature reading', default=False)
     parser.add_argument('-c','--fmcconfig', action='store_true', help='perform only the acquisition, not configuring the FMC board', default=False)
     parser.add_argument('-w','--swsweep', action='store_true', help='perform acquistion sweeping the switching', default=False)
-    
+    parser.add_argument('-z','--sw', action='store_true', help='acquire data with switching on', default=False)
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
@@ -39,16 +39,22 @@ def run_single(argv):
         board = args.board
         bpm = args.bpm
 
-    if args.swsweep:
-        sw_sweep = ['on','off']
+    if args.sw:
+        sw = 'on'
     else:
-        sw_sweep = ['off']
+        sw = 'off'
+
+    if args.swsweep:
+        sw_sweep = ['off','on']
+    else:
+        sw_sweep = [sw]
 
     while True:
         exp.load_from_metadata(args.metadata)
         print('\n====================')
         print('EXPERIMENT SETTINGS:')
         print('====================')
+        exp.metadata['rffe_switching'] = ', '.join(sw_sweep)
 
         if args.temperature:
             sys.path.append('../th2e/')
@@ -73,16 +79,16 @@ def run_single(argv):
                     ntries = 1;
                     date = strftime('%d-%m-%Y')
 
-                    for sw in sw_sweep:
-                        print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+' with Switching '+sw+' ...')
-                        exp.metadata['rffe_switching'] = sw
+                    for sw_s in sw_sweep:
+                        print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+' with Switching '+sw_s+' ...')
+                        exp.metadata['rffe_switching'] = sw_s
                         while True:
                             data_filenames = []
                             for datapath in args.datapath:
                                 if 'fofb' or 'tbt' in datapath:
-                                    data_filenames.append(os.path.join(os.path.normpath(args.output), date, args.afc+'_'+args.fmc, datapath, 'sw_'+sw, 'data_' + str(ntries) + '_' + datapath, 'data_' + str(ntries) + '_' + datapath + '.txt'))
+                                    data_filenames.append(os.path.join(os.path.normpath(args.output), date, args.afc+'_'+args.fmc, datapath, 'sw_'+sw_s, 'data_' + str(ntries) + '_' + datapath, 'data_' + str(ntries) + '_' + datapath + '.txt'))
                                 else:
-                                    data_filenames.append(os.path.join(os.path.normpath(args.output), date, args.afc+'_'+args.fmc, datapath, 'sw_'+sw, 'data_' + str(ntries) + '_' + datapath + '.txt'))
+                                    data_filenames.append(os.path.join(os.path.normpath(args.output), date, args.afc+'_'+args.fmc, datapath, 'sw_'+sw_s, 'data_' + str(ntries) + '_' + datapath + '.txt'))
                             ntries = ntries+1
                             if all(not os.path.exists(data_filename) for data_filename in data_filenames):
                                 break
