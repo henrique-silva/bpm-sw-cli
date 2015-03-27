@@ -105,7 +105,6 @@ def run_single(argv):
                                 break
                             except bpm_experiment.RFFETimeout:
                                 print ('RFFE board doesn\'t respond!')
-                                b
                             else:
                                 print(' done. Results in: ' + data_filenames[i])
             break
