@@ -1,5 +1,13 @@
 #!/usr/local/bin/python3
 
+def acq_group(s):
+    import re
+    args = re.findall("\[(.*?)\]", s)
+    groups = []
+    for item in args:
+        groups.extend([str(item)])
+    return groups
+
 def run_single(argv):
     import sys
     import os
@@ -12,8 +20,6 @@ def run_single(argv):
     parser.add_argument('output', help='folder where the output data will be saved')
     parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
     parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.2.117.47:8888')
-    parser.add_argument('-d','--board', type=int, help='select the target board for the test', action='append')
-    parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
     parser.add_argument('-f','--afc', help='AFC Board name', default='AFC1')
     parser.add_argument('-m','--fmc', help='FMC Board name', default='V3P1')
     parser.add_argument('-s','--silent', action='store_true', help='run the script without asking for confirmation', default=False)
@@ -23,21 +29,18 @@ def run_single(argv):
     parser.add_argument('-c','--fmcconfig', action='store_true', help='perform only the acquisition, not configuring the FMC board', default=False)
     parser.add_argument('-w','--swsweep', action='store_true', help='perform acquistion sweeping the switching', default=False)
     parser.add_argument('-z','--sw', action='store_true', help='acquire data with switching on', default=False)
+    parser.add_argument('-g','--group', type=acq_group, help='specify board and bpm number in the format -> [BOARD, BPM, BPM]', action='append')
     args = parser.parse_args(argv)
 
     exp = bpm_experiment.BPMExperiment(args.endpoint)
 
-    if not args.board:
-        args.board = '0'
-    if not args.bpm:
-        args.bpm = '0'
-
+    acq_groups = []
     if args.allboards:
-        board = range(0,12)
-        bpm = range(0,2)
+        board = ['0','1','2','3','4','5','6','7','8','9','10','11']
+        comb = list(itertools.product(board, ['0'],['1']))
+        acq_groups.extend(comb)
     else:
-        board = args.board
-        bpm = args.bpm
+        acq_groups.extend(args.group)
 
     if args.sw:
         sw = 'on'
@@ -73,12 +76,13 @@ def run_single(argv):
             input_text = ''
 
         if not input_text:
-            for board_number in board:
+            for group in acq_groups:
+                board_number = group[0].split(',')[0]
+                bpm = group[0].split(',')[1:]
                 for bpm_number in bpm:
                     # Assure that no file or folder will be overwritten
                     ntries = 1;
                     date = strftime('%d-%m-%Y')
-
                     for sw_s in sw_sweep:
                         print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+' with Switching '+sw_s+' ...')
                         exp.metadata['rffe_switching'] = sw_s
