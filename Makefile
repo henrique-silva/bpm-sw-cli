@@ -34,12 +34,13 @@ CFLAGS_PLATFORM = -Wall -Wextra -Werror
 LDFLAGS_PLATFORM =
 
 # Libraries
-LIBS = -lbpmclient -lmdp -lczmq -lzmq
+LIBS = -lbpmclient -lmlm -lerrhand -lczmq -lzmq
+
 # General library flags -L<libdir>
-LFLAGS =
+LFLAGS = -L/home/ABTLUS/lucas.russo/usr/local/lib
 
 # Include directories
-INCLUDE_DIRS = -I. -I/usr/local/lib
+INCLUDE_DIRS = -I. -I/home/ABTLUS/lucas.russo/usr/local/include
 
 # Merge all flags. Optimize for size (-Os)
 CFLAGS += $(CFLAGS_PLATFORM) $(CFLAGS_DEBUG)
@@ -55,7 +56,7 @@ OUT = $(basename $(examples_SRC))
 all: $(OUT)
 
 %: %.c
-	$(CC) $(LFLAGS) $(CFLAGS) $(INCLUDE_DIRS) $^ -o $@ $(LIBS)
+	$(CC) $(LFLAGS) $(CFLAGS) $(INCLUDE_DIRS) $^ -o $@ $(LFLAGS) $(LIBS)
 
 #BAD
 clean:
