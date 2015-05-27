@@ -14,8 +14,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('metadata', help='metadata file path')
 parser.add_argument('output', help='folder where the output data will be saved')
 parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.0.18.39:8888')
-parser.add_argument('-d','--board', type=int, help='select the target board for the test', action='append')
-parser.add_argument('-b','--bpm', type=int, choices=[0,1], help='select the target bpm for the test', action='append')
 parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
 parser.add_argument('-c','--fmcconfig', action='store_true', help='enable the FMC configuration process', default=False)
 parser.add_argument('-p','--datapath', help='choose the acquisition datapath (adc, tbt, fofb)', action='append', required=True)
@@ -27,12 +25,12 @@ parser.add_argument('-n','--stop', help='sweep final value', type=int, default=0
 parser.add_argument('-s','--step', help='sweep step', type=int, default=10)
 parser.add_argument('-w','--dspsweep', action='store_true', help='run the script for all boards and bpms', default=False)
 parser.add_argument('-f','--rffesweep', action='store_true', help='run the script for all boards and bpms', default=False)
+parser.add_argument('-g','--group', help='specify board and bpm number in the format -> [BOARD, BPM, BPM]', action='append', type=str)
 args = parser.parse_args()
 
-if not args.board:
-    args.board = '0'
-if not args.bpm:
-    args.bpm = '0'
+burst_group = []
+if args.group:
+    burst_group.extend(args.group)
 
 last_experiment_time = time.time()
 
@@ -44,11 +42,12 @@ while True:
     if args.runtype == 'single':
         single_args = [args.metadata, args.output, '-e' ,args.endpoint, '-s']
         for datapath in args.datapath:
-            single_args.extend(['-p', datapath])
+            single_args.extend(['-p', str(datapath)])
         if args.allboards:
             single_args.extend(['-a'])
         else:
-            single_args.extend(['-d', str(args.board),'-b', str(args.bpm)])
+            for group in burst_group:
+                single_args.extend(['-g', group])
         if args.rffeconfig:
             single_args.extend(['-r'])
         if args.fmcconfig:
