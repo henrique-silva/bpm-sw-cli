@@ -40,7 +40,11 @@ def run_single(argv):
         comb = list(itertools.product(board, ['0'],['1']))
         acq_groups.extend(comb)
     else:
-        acq_groups.extend(args.group)
+        if args.group:
+            acq_groups.extend(args.group)
+        else:
+            #Default acquisition path
+            acq_groups.extend(['0','0','1'])
 
     if args.sw:
         sw = 'on'
