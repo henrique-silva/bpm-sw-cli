@@ -35,10 +35,11 @@ def run_single(argv):
     exp = bpm_experiment.BPMExperiment(args.endpoint)
 
     acq_groups = []
+    all_boards = []
     if args.allboards:
-        board = ['0','1','2','3','4','5','6','7','8','9','10','11']
-        comb = list(itertools.product(board, ['0'],['1']))
-        acq_groups.extend(comb)
+        for i in range(0,12):
+            all_boards.append([str(i)+',0,1'])
+        acq_groups.extend(all_boards)
     else:
         if args.group:
             acq_groups.extend(args.group)
