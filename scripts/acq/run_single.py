@@ -75,7 +75,7 @@ def run_single(argv):
         print(''.join(sorted(exp.get_metadata_lines())))
 
         if not args.silent:
-            input_text = input('Press ENTER to run the experiment. \nType \'l\' and press ENTER to load new experiment settings from \'' + os.path.abspath(args.metadata) + '\'.\nType \'q\' and press ENTER to quit.\n')
+            input_text = raw_input('Press ENTER to run the experiment. \nType \'l\' and press ENTER to load new experiment settings from \'' + os.path.abspath(args.metadata) + '\'.\nType \'q\' and press ENTER to quit.\n')
         else:
             input_text = ''
 
