@@ -16,10 +16,8 @@
 #define DEFAULT_CHAN_NUM            0
 
 #define DFLT_BPM_NUMBER             0
-#define MAX_BPM_NUMBER              1
 
 #define DFLT_BOARD_NUMBER           0
-#define MAX_BOARD_NUMBER            10
 
 #define FMC130M_4CH_MODULE_NAME     "FMC130M_4CH"
 #define DSP_MODULE_NAME             "DSP"
@@ -1887,10 +1885,6 @@ int main (int argc, char *argv [])
         board_number = DFLT_BOARD_NUMBER;
     } else {
         board_number = strtoul (board_number_str, NULL, 10);
-        if (board_number > MAX_BOARD_NUMBER) {
-            fprintf (stderr, "[client]: BOARD number too big! Defaulting to: %u\n",
-                    MAX_BOARD_NUMBER);
-            board_number = MAX_BOARD_NUMBER;
         }
     }
 
@@ -1901,12 +1895,6 @@ int main (int argc, char *argv [])
         bpm_number = DFLT_BPM_NUMBER;
     } else {
         bpm_number = strtoul (bpm_number_str, NULL, 10);
-
-        if (bpm_number > MAX_BPM_NUMBER) {
-            fprintf (stderr, "[client]: BPM number too big! Defaulting to: %u\n",
-                    MAX_BPM_NUMBER);
-            bpm_number = MAX_BPM_NUMBER;
-        }
     }
 
     /* Both Acq Chan and Acq Samples must be set or none of them */
