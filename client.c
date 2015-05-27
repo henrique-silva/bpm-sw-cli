@@ -1390,7 +1390,7 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
-                /* Get Monit AMP */
+                /* Set Monit AMP */
             case 'J':
                 if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
                     fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
@@ -1398,13 +1398,13 @@ int main (int argc, char *argv [])
                 }
                 item.name = strdup(corr_name);
                 item.service = DSP_MODULE_NAME;
-                item.rw = 1;
+                item.rw = 0;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
                 free(item.name);
                 break;
-
-                /* Set Monit AMP */
+                
+                /* Get Monit AMP */
             case 'j':
                 if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
                     fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
@@ -1412,7 +1412,7 @@ int main (int argc, char *argv [])
                 }
                 item.name = strdup(corr_name);
                 item.service = DSP_MODULE_NAME;
-                item.rw = 0;
+                item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
                 free(item.name);
