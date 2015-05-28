@@ -53,7 +53,7 @@ class OnDemandThread(Thread):
         while(1):
             sync.wait()
             ondemand_time = sync_time
-            #print ('FOFB starting at '+str(ondemand_time)+'! ')
+            #print ('On Demand starting at '+str(ondemand_time)+'! ')
             try:
                 run_single(self.args)
             except:
