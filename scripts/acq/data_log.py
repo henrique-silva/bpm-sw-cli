@@ -106,7 +106,7 @@ parser.add_argument('-a','--allboards', action='store_true', help='run the scrip
 parser.add_argument('-g','--group', help='specify board and bpm number in the format -> [BOARD, BPM, BPM]', action='append', type=str)
 parser.add_argument('-m','--monitdelay', help='interval between monitoring acquisitions (in seconds)', type=float, default=0.5)
 parser.add_argument('-t','--tempdelay', help='interval between temperature acquisitions (in seconds)', type=float, default=60)
-parser.add_argument('-d','--demanddelay', help='interval between FOFB acquisitions (in seconds)', type=float, default=1800)
+parser.add_argument('-d','--ondemanddelay', help='interval between on demand acquisitions (in seconds)', type=float, default=1800)
 args = parser.parse_args()
 
 burst_group = []
