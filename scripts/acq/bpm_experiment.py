@@ -203,7 +203,7 @@ class BPMExperiment():
             if not os.path.isdir(path):
                 raise
 
-        with open(data_filename, 'x') as f:
+        with open(data_filename, 'w') as f:
             if not self.debug:
                 p = subprocess.call(command_argument_list, stdout=f)
             else:
@@ -249,7 +249,7 @@ class BPMExperiment():
         # Metadata file is placed in the same path and with the same filename as the data file, but with .metadata extension
         output_metadata_filename = os.path.splitext(data_filename)[0] + '.metadata'
 
-        with open(output_metadata_filename, 'x') as f:
+        with open(output_metadata_filename, 'w') as f:
             f.writelines(sorted(config_fromfile_lines))
 
 class BPMError(Exception):
