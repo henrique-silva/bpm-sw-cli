@@ -59,9 +59,6 @@ def run_single(argv):
 
     while True:
         exp.load_from_metadata(args.metadata)
-        print('\n====================')
-        print('EXPERIMENT SETTINGS:')
-        print('====================')
         exp.metadata['rffe_switching'] = ', '.join(sw_sweep)
 
         if args.temperature:
@@ -73,9 +70,12 @@ def run_single(argv):
             exp.metadata['rack_humidity'] = str(hum)+' %'
             exp.metadata['rack_dew_point'] = str(dew)+' C'
 
-        print(''.join(sorted(exp.get_metadata_lines())))
-
         if not args.silent:
+            print('\n====================')
+            print('EXPERIMENT SETTINGS:')
+            print('====================')
+            print(''.join(sorted(exp.get_metadata_lines())))
+
             input_text = raw_input('Press ENTER to run the experiment. \nType \'l\' and press ENTER to load new experiment settings from \'' + os.path.abspath(args.metadata) + '\'.\nType \'q\' and press ENTER to quit.\n')
         else:
             input_text = ''
@@ -89,7 +89,8 @@ def run_single(argv):
                     ntries = 1;
                     date = strftime('%d-%m-%Y')
                     for sw_s in sw_sweep:
-                        print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+' with Switching '+sw_s+' ...')
+                        if not args.silent:
+                            print('\n        Using Board '+str(board_number)+ ' and BPM '+str(bpm_number)+' with Switching '+sw_s+' ...')
                         exp.metadata['rffe_switching'] = sw_s
                         while True:
                             data_filenames = []
@@ -99,8 +100,9 @@ def run_single(argv):
                             if all(not os.path.exists(data_filename) for data_filename in data_filenames):
                                 break
                         for i in range(0,len(data_filenames)):
-                            print('        Running ' + args.datapath[i] + ' datapath...')
-                            sys.stdout.flush()
+                            if not args.silent:
+                                print('        Running ' + args.datapath[i] + ' datapath...')
+                                sys.stdout.flush()
                             try:
                                 exp.run(data_filenames[i], args.datapath[i], str(board_number), str(bpm_number), args.fmcconfig, args.rffeconfig)
                             except bpm_experiment.OverPowerError as e:
@@ -112,7 +114,8 @@ def run_single(argv):
                             except bpm_experiment.RFFETimeout:
                                 print ('RFFE board doesn\'t respond!')
                             else:
-                                print(' done. Results in: ' + data_filenames[i])
+                                if not args.silent:
+                                    print(' done. Results in: ' + data_filenames[i])
             break
 
         elif input_text == 'q':
