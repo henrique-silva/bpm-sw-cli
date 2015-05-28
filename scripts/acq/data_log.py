@@ -97,7 +97,7 @@ class TimeThread(Thread):
 parser = argparse.ArgumentParser()
 parser.add_argument('metadata', help='metadata file path')
 parser.add_argument('output', help='folder where the output data will be saved')
-parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.0.18.39:8888')
+parser.add_argument('-e','--endpoint', help='broker endpoint', default='tcp://10.2.117.47:9999')
 parser.add_argument('-r','--rffeconfig', action='store_true', help='enable the rffe configuration process', default=False)
 parser.add_argument('-c','--fmcconfig', action='store_true', help='enable the FMC configuration process', default=False)
 parser.add_argument('-a','--allboards', action='store_true', help='run the script for all boards and bpms', default=False)
