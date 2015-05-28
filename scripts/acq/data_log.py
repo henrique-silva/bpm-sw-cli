@@ -73,7 +73,7 @@ class MonitThread(Thread):
             monit_time = sync_time
             #print ('Monit starting at '+str(monit_time)+'! ')
             try:
-                run_single(args)
+                run_single(self.args)
             except:
                 print('Error while running the Monitoring acquisition!')
             while time.time() - monit_time < self.delay:
