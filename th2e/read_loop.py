@@ -26,7 +26,7 @@ print('\n\tThe following sensors are being monitored, press ctrl-c to stop...')
 print('Time\tTemperature\tHumidity\tDew Point')
 while True:
     resp = sensor.read_all()
-    if len(read) == 3:
+    if len(resp) == 3:
         temp, hum, dew = resp
         print('\r'+str(last_read_time)+'\t'+str(temp)+'\t'+str(hum)+'\t'+str(dew)),
         with open(abspath+'/th2e_readings.txt', 'a') as f:
