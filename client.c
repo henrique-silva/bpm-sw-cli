@@ -1945,6 +1945,7 @@ int main (int argc, char *argv [])
     bpm_client_t *bpm_client = bpm_client_new (broker_endp, verbose, NULL);
     if (bpm_client == NULL) {
         fprintf(stderr, "[client]: Error in memory allocation for bpm_client\n");
+        exit(EXIT_FAILURE);
     }
 
     /* Call all functions from the FMC130M_4CH, SWAP and DSP Module that the user specified */
