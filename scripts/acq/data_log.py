@@ -16,32 +16,30 @@ class TemperatureThread(Thread):
         Thread.__init__(self)
         self.delay = delay
         self.output_path = output_path
-
+        try:
+            self.th2e_socket = TH2E('10.2.117.254')
+        except:
+            raise
+        
     def run(self):
         while(1):
-            temp = 0
-            hum = 0
-            dew = 0
+            temp=hum=dew=0
             sync.wait()
             temp_time = sync_time
             #print ('Temperature starting at '+str(temp_time)+'! ')
             try:
-                sensor = TH2E('10.2.117.254')
-                temp, hum, dew = sensor.read_all()
+                temp, hum, dew = self.th2e_socket.read_all()
             except:
-                #sensor.read_all() already prints its exception
                 while time.time() - temp_time < self.delay:
                     continue
                 continue
-
             abspath = os.path.abspath(self.output_path)
             if not os.path.isfile(abspath):
                 abspath = abspath+'/temp_log.txt'
                 with open(abspath, 'w') as f:
                     f.write('Time\tTemperature\tHumidity\tDew Point\n')
             with open(abspath, 'a') as f:
-                if temp and hum and dew:
-                    f.write(str(temp_time)+'\t'+str(temp)+'\t'+str(hum)+'\t'+str(dew)+'\n')
+                f.write(str(temp_time)+'\t'+str(temp)+'\t'+str(hum)+'\t'+str(dew)+'\n')
             while time.time() - temp_time < self.delay:
                 continue
 
