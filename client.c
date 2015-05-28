@@ -1885,7 +1885,6 @@ int main (int argc, char *argv [])
         board_number = DFLT_BOARD_NUMBER;
     } else {
         board_number = strtoul (board_number_str, NULL, 10);
-        }
     }
 
     /* Check if the bpm number is within range and set to default if necessary */
