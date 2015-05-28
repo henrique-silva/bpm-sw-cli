@@ -55,7 +55,7 @@ class OnDemandThread(Thread):
             ondemand_time = sync_time
             #print ('FOFB starting at '+str(ondemand_time)+'! ')
             try:
-                run_single(args)
+                run_single(self.args)
             except:
                 print('Error while running the FOFB acquisition!')
             while time.time() - ondemand_time < self.delay:
