@@ -103,9 +103,9 @@ class Sensor():
         elif frm != FRM:
             print ("Wrong packet format FRM, expected " + str(FRM) + " got " + str(frm))
             return False
-        elif sig != self.current_sig:
-            print ("Wrong packet signature SIG, expected " + str(self.current_sig) + " , got " + str(sig))
-            return False
+        #elif sig != self.current_sig:
+            #print ("Wrong packet signature SIG, expected " + str(self.current_sig) + " , got " + str(sig))
+            #return False
         #TODO: Check ACK Code according to selected mode
         #elif ack != 0:
             #print ("Error reported by ACK: " + ACK[ack])
