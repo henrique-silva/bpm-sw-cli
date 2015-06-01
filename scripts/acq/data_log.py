@@ -17,14 +17,13 @@ class TemperatureThread(Thread):
         self.delay = delay
         self.output_path = output_path
         self.th2e_socket = socket
-
+        print ('Starting Temperature Thread!')
 
     def run(self):
         while(1):
             temp=hum=dew=0
             sync.wait()
             temp_time = sync_time
-            #print ('Temperature starting at '+str(temp_time)+'! ')
             try:
                 temp, hum, dew = self.th2e_socket.read_all()
             except:
@@ -46,12 +45,12 @@ class OnDemandThread(Thread):
         Thread.__init__(self)
         self.delay = delay
         self.args = args
+        print ('Starting On Demand Data Thread!')
 
     def run(self):
         while(1):
             sync.wait()
             ondemand_time = sync_time
-            #print ('On Demand starting at '+str(ondemand_time)+'! ')
             try:
                 run_single(self.args)
             except:
@@ -146,14 +145,10 @@ sync = threading.Event()
 sync.clear()
 
 #Threads Start
-print ('Starting Timing Thread!')
 Time_th.start()
-sleep(0.1)
-print ('Starting Temperature Thread!')
+sleep(1)
 Temp_th.start()
-print ('Starting On Demand Data Thread!')
 OnDemand_th.start()
-print ('Starting Monitoring Thread!')
 Monit_th.start()
 
 while(1):
