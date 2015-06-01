@@ -55,6 +55,7 @@ class OnDemandThread(Thread):
                 run_single(self.args)
             except:
                 print('Error while running the On Demand acquisition!')
+                raise
             while time.time() - ondemand_time < self.delay:
                 continue
 
