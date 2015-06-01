@@ -2076,7 +2076,6 @@ int main (int argc, char *argv [])
             exit(EXIT_FAILURE);
         }
         print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
-        fprintf (stderr, "[client:acq]: %s\n", bpm_client_err_str(err));
         acq_full_call = 0;
         free(valid_data);
     }
