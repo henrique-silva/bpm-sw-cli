@@ -54,7 +54,7 @@ class OnDemandThread(Thread):
             try:
                 run_single(self.args)
             except:
-                print('Error while running the FOFB acquisition!')
+                print('Error while running the On Demand acquisition!')
             while time.time() - ondemand_time < self.delay:
                 continue
 
