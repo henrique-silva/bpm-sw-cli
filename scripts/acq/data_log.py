@@ -132,7 +132,7 @@ except:
    raise
 
 #Threads Config
-Temp_th = TemperatureThread(args.tempdelay, args.output)
+Temp_th = TemperatureThread(args.tempdelay, args.output, socket)
 Temp_th.daemon = True
 Monit_th = MonitThread(args.monitdelay, monit_args)
 Monit_th.daemon = True
