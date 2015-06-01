@@ -107,6 +107,7 @@ class TimeThread(Thread):
     def __init__ (self, tick):
         Thread.__init__(self)
         self.tick = tick
+        print ('Starting Timing Thread!')
 
     def run(self):
         global sync_time
