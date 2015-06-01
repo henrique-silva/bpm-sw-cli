@@ -31,8 +31,8 @@ class TemperatureThread(Thread):
                     continue
                 continue
             abspath = os.path.abspath(self.output_path)
+            abspath = abspath+'/temp_log.txt'
             if not os.path.isfile(abspath):
-                abspath = abspath+'/temp_log.txt'
                 with open(abspath, 'w') as f:
                     f.write('Time\tTemperature\tHumidity\tDew Point\n')
             with open(abspath, 'a') as f:
