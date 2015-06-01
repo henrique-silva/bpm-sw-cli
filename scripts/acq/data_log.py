@@ -1,6 +1,8 @@
 #!/usr/local/bin/python3
 
 import sys
+import re
+import subprocess
 import os
 import time
 import argparse
@@ -60,20 +62,42 @@ class OnDemandThread(Thread):
                 continue
 
 class MonitThread(Thread):
-    def __init__ (self, delay, args):
+    def __init__ (self, delay, groups, args):
         Thread.__init__(self)
         self.delay = delay
+        self.groups = groups
         self.args = args
+        print ('Starting Monitoring Thread!')
 
     def run(self):
         while(1):
             sync.wait()
             monit_time = sync_time
-            #print ('Monit starting at '+str(monit_time)+'! ')
-            try:
-                run_single(self.args)
-            except:
-                print('Error while running the Monitoring acquisition!')
+            for group in self.groups:
+                board_number = group.split(',')[0]
+                bpm = group.split(',')[1:]
+                for bpm_number in bpm:
+                    self.args.extend(['--board',str(board_number),'--bpm', str(bpm_number)])
+                    monit_amp = [None]*4
+                    for i in range(0,4):
+                        self.args.extend(['--getmonitamp', 'chan='+str(i)])
+                        try:
+                            p = subprocess.Popen(self.args, stdout=subprocess.PIPE)
+                            raw_monit_amp, err = p.communicate()
+                            monit_amp[i] = raw_monit_amp.split(' ')[1].strip('\n')
+                            self.args.remove('--getmonitamp')
+                            self.args.remove('chan='+str(i))
+                        except:
+                            print('Error while running the Monitoring acquisition!')
+                            raise
+                    self.args.remove('--board')
+                    self.args.remove(str(board_number))
+                    self.args.remove('--bpm')
+                    self.args.remove(str(bpm_number))
+            with open(args.output+'monit_amp.txt', 'a') as g:
+                monit_ns = int(floor((monit_time * 1e9) % 1e9))
+                monit_ts = '%s.%09dZ' % (strftime('%Y-%m-%dT%H:%M:%S', gmtime(monit_time)), monit_ns)
+                g.write(str(monit_ts)+'\t'+str(monit_amp[0])+'\t'+str(monit_amp[1])+'\t'+str(monit_amp[2])+'\t'+str(monit_amp[3])+'\n')
             while time.time() - monit_time < self.delay:
                 continue
 
@@ -120,11 +144,15 @@ else:
     for group in burst_group:
         single_args.extend(['-g', group])
 
+#On Demand arguments
 ondemand_args = single_args
 ondemand_args.extend(['-p', 'fofbamp', '-p', 'tbtamp', '-p', 'adc'])
 
-monit_args = single_args
-monit_args.extend(['-p', 'monitamp'])
+#Monitoring arguments
+monit_args = ['../../client', '-e', str(args.endpoint)]
+acq_groups = []
+for raw_item in args.group:
+    acq_groups.extend(re.findall("\[(.*?)\]", raw_item))
 
 try:
    socket = TH2E('10.2.117.254')
@@ -134,7 +162,7 @@ except:
 #Threads Config
 Temp_th = TemperatureThread(args.tempdelay, args.output, socket)
 Temp_th.daemon = True
-Monit_th = MonitThread(args.monitdelay, monit_args)
+Monit_th = MonitThread(args.monitdelay, acq_groups, monit_args)
 Monit_th.daemon = True
 OnDemand_th = OnDemandThread(args.ondemanddelay, ondemand_args)
 OnDemand_th.daemon = True
