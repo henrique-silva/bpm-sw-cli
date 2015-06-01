@@ -38,7 +38,9 @@ class TemperatureThread(Thread):
                 with open(abspath, 'w') as f:
                     f.write('Time\tTemperature\tHumidity\tDew Point\n')
             with open(abspath, 'a') as f:
-                f.write(str(temp_time)+'\t'+str(temp)+'\t'+str(hum)+'\t'+str(dew)+'\n')
+                temp_ns = int(floor((temp_time * 1e9) % 1e9))
+                temp_ts = '%s.%09dZ' % (strftime('%Y-%m-%dT%H:%M:%S', gmtime(temp_time)), temp_ns)
+                f.write(str(temp_ts)+'\t'+str(temp)+'\t'+str(hum)+'\t'+str(dew)+'\n')
             while time.time() - temp_time < self.delay:
                 continue
 
