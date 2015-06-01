@@ -12,15 +12,13 @@ from TH2E import TH2E
 from run_single import run_single
 
 class TemperatureThread(Thread):
-    def __init__ (self,delay, output_path):
+    def __init__ (self,delay, output_path, socket):
         Thread.__init__(self)
         self.delay = delay
         self.output_path = output_path
-        try:
-            self.th2e_socket = TH2E('10.2.117.254')
-        except:
-            raise
-        
+        self.th2e_socket = socket
+
+
     def run(self):
         while(1):
             temp=hum=dew=0
@@ -127,6 +125,11 @@ ondemand_args.extend(['-p', 'fofbamp', '-p', 'tbtamp', '-p', 'adc'])
 
 monit_args = single_args
 monit_args.extend(['-p', 'monitamp'])
+
+try:
+   socket = TH2E('10.2.117.254')
+except:
+   raise
 
 #Threads Config
 Temp_th = TemperatureThread(args.tempdelay, args.output)
