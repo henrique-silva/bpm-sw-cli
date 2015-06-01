@@ -118,6 +118,7 @@ class TimeThread(Thread):
             while time.time() - sync_time < self.tick:
                 continue
 
+#Argument parsing
 parser = argparse.ArgumentParser()
 parser.add_argument('metadata', help='metadata file path')
 parser.add_argument('output', help='folder where the output data will be saved')
@@ -135,7 +136,8 @@ burst_group = []
 if args.group:
     burst_group.extend(args.group)
 
-single_args = [args.metadata, args.output, '-e' ,args.endpoint, '-s'] 
+#Commom acquisition arguments
+single_args = [args.metadata, args.output, '-e' ,args.endpoint, '-s']
 if args.rffeconfig:
     single_args.extend(['-r'])
 if args.fmcconfig:
