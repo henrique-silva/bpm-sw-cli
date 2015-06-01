@@ -151,5 +151,10 @@ Temp_th.start()
 OnDemand_th.start()
 Monit_th.start()
 
-while(1):
-    pass
+try:  
+    while (1):
+        pass
+except KeyboardInterrupt:
+    print('Ctrl-C received! Closing sensor socket!')
+    socket.close()
+    sys.exit()
