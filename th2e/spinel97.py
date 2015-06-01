@@ -43,6 +43,9 @@ class Sensor():
         except socket.error:
             raise
 
+    def close(self):
+        self.th2e_socket.close()
+
     def query(self, inst, param, receive=True, addr=universal_address):
         self.current_sig = randint(0,255)
         NUM = 5 + len(param)

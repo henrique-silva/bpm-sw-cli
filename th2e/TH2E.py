@@ -16,6 +16,9 @@ class TH2E():
             print("Could not connect to the TH2E sensor, please verify the connection and try again")
             raise err
 
+    def close(self):
+        self.Sensor.close()
+
     def read_temp(self):
         data = self.Sensor.query(0x51, [0x00])
         raw = [data[x:x+4] for x in range(0,len(data),4)]
