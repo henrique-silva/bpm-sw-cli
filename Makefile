@@ -11,20 +11,15 @@ OBJCOPY =	$(CROSS_COMPILE)objcopy
 SIZE =		$(CROSS_COMPILE)size
 MAKE =		make
 
+# Selects the install prefix directory
+PREFIX ?= /usr/local
+
 # General C flags
 CFLAGS = -std=gnu99 -O2
 
 LOCAL_MSG_DBG ?= n
 DBE_DBG ?= n
 CFLAGS_DEBUG =
-
-ifeq ($(LOCAL_MSG_DBG),y)
-CFLAGS_DEBUG += -DLOCAL_MSG_DBG=1
-endif
-
-ifeq ($(DBE_DBG),y)
-CFLAGS_DEBUG += -DDBE_DBG=1
-endif
 
 # Debug flags -D<flasg_name>=<value>
 CFLAGS_DEBUG += -g
@@ -37,17 +32,16 @@ LDFLAGS_PLATFORM =
 LIBS = -lbpmclient -lmlm -lerrhand -lczmq -lzmq
 
 # General library flags -L<libdir>
-LFLAGS = -L/home/ABTLUS/lucas.russo/usr/local/lib
+LFLAGS = -L${PREFIX}/lib
 
 # Include directories
-INCLUDE_DIRS = -I. -I/home/ABTLUS/lucas.russo/usr/local/include
+INCLUDE_DIRS = -I. -I${PREFIX}/include
 
 # Merge all flags. Optimize for size (-Os)
 CFLAGS += $(CFLAGS_PLATFORM) $(CFLAGS_DEBUG)
 #-Os
 
 LDFLAGS = $(LDFLAGS_PLATFORM)
-#-ffunction-sections -fdata-sections -Wl,--gc-sections
 
 # Every .c file will must be a separate example
 examples_SRC = $(wildcard *.c)
@@ -64,3 +58,9 @@ clean:
 
 mrproper: clean
 	rm -f $(OUT)
+
+install:
+	install -m 755 $(OUT) $(PREFIX)/bin
+
+uninstall:
+	rm -rf $(PREFIX)/bin/$(OUT)
