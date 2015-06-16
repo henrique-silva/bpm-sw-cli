@@ -1,14 +1,7 @@
-#include "bpm_client.h"
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "dispatch_table.h"
-
-#include "sm_io_codes.h"
-#include "sm_io_fmc130m_4ch_exports.h"
-#include "sm_io_swap_exports.h"
-#include "sm_io_dsp_exports.h"
-#include "sm_io_acq_exports.h"
+#include <bpm_client.h>
 
 #define DFLT_BIND_FOLDER "/tmp/bpm"
 
@@ -185,7 +178,7 @@ static fe_gain_t gains[16] =
     {"dd", 0, 1, 0, 0},
     {"dd", 0, 0, 0, 0},
     {"db", 0, 1, 1, 0},
-    {"db", 0, 0, 1, 0} 
+    {"db", 0, 0, 1, 0}
 };
 
 bpm_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, char *corr_name, uint32_t *input)
@@ -707,7 +700,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                 /* Get ADC Rand */
             case getadcrand:
                 item.name = FMC130M_4CH_NAME_ADC_RAND;
@@ -1036,7 +1029,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 PLL A Divider */
             case getad9510plladiv:
                 item.name = FMC130M_4CH_NAME_AD9510_PLL_A_DIV;
@@ -1055,7 +1048,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 PLL B Divider */
             case getad9510pllbdiv:
                 item.name = FMC130M_4CH_NAME_AD9510_PLL_B_DIV;
@@ -1074,7 +1067,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 PLL Prescaler */
             case getad9510pllpresc:
                 item.name = FMC130M_4CH_NAME_AD9510_PLL_PRESCALER;
@@ -1093,7 +1086,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 R Divider */
             case getad9510pllrdiv:
                 item.name = FMC130M_4CH_NAME_AD9510_R_DIV;
@@ -1112,7 +1105,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 PLL PDown */
             case getad9510pllpdown:
                 item.name = FMC130M_4CH_NAME_AD9510_PLL_PDOWN;
@@ -1131,7 +1124,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 MUX Status */
             case getad9510mux:
                 item.name = FMC130M_4CH_NAME_AD9510_MUX_STATUS;
@@ -1150,7 +1143,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 CP Current */
             case getad9510cpcurr:
                 item.name = FMC130M_4CH_NAME_AD9510_CP_CURRENT;
@@ -1169,7 +1162,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 Outputs */
             case getad9510outputs:
                 item.name = FMC130M_4CH_NAME_AD9510_OUTPUTS;
@@ -1188,7 +1181,7 @@ int main (int argc, char *argv [])
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
-                
+
                  /* Get AD9510 PLL Clock Select */
             case getad9510pllclksel:
                 item.name = FMC130M_4CH_NAME_AD9510_PLL_CLK_SEL;
@@ -1403,7 +1396,7 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 free(item.name);
                 break;
-                
+
                 /* Get Monit AMP */
             case 'j':
                 if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
