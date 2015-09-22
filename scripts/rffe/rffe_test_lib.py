@@ -87,8 +87,6 @@ class Agilent33521A:
         time.sleep(SLEEP_TIME)
 
     def set_impedance(self,impedance):
-        """set the center frequency of the VNA"""
-        #self.vna_socket.send(b":CALC1:MARK1:X " + str(value) + b"\n")
         self.sgen_socket.send("OUTPUT1:LOAD " + str(impedance) + "\n")
         return
 
