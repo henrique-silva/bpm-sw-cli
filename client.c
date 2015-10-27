@@ -244,9 +244,15 @@ int main (int argc, char *argv [])
     char *bpm_number_str = NULL;
 
     /* Acquitision parameters check variables */
+    int acq_samples_pre_set = 0;
+    int acq_samples_post_set = 0;
+    int acq_num_shots_set = 0;
     int acq_samples_set = 0;
-    int32_t acq_samples_val = 0;
     int acq_chan_set = 0;
+    uint32_t acq_samples_pre_val = 0;
+    uint32_t acq_samples_post_val = 0;
+    uint32_t acq_num_shots_val = 0;
+    uint32_t acq_total_samples_val = 0;
     uint32_t acq_chan_val = 0;
     int acq_full_call = 0;
     int acq_start = 0;
@@ -352,9 +358,57 @@ int main (int argc, char *argv [])
                 "  --rffegetout <chan=(1|2)>        Get RFFE Voltage signal in the heater\n"
                 "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
                 "  --rffereset                      Resets the RFFE controller\n"
-                "  -E  --setsamples   <number of samples>\n"
-                "                                     [<number of samples> must be between 4 and\n"
+                "  --setacqtrig <type>              Set acquisition trigger type\n"
+                "                                     [<type> must be one of the following:\n"
+                "                                     0 -> skip trigger; 1 -> wait for external trigger\n"
+                "                                     2 -> wait for data-driven trigger; 3 -> wait for software trigger]\n"
+                "  --getacqtrig                     Get acquisition trigger type\n"
+                "  --setdatatrigchan <data-driven trigger channel>\n"
+                "                                   Set data-driven trigger channel to monitor\n"
+                "                                     [<data-driven trigger channel> Channel number to monitor for a over/under threshold event.\n"
+                "                                     Must be between the following:\n"
+                "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
+                "                                     4 -> TBT Decim IQ120; 5 -> TBT Decim IQ340; 6 -> TBT Amp;\n"
+                "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
+                "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
+                "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
+                "  --getdatatrigchan                Get data-driven trigger channel to monitor\n"
+                "  --setdatatrigpol <polarity>      Set acquisition data-driven trigger polarity\n"
+                "                                     [<polarity> must be one of the following:\n"
+                "                                     0 -> positive edge (0 -> 1), 1 -> negative edge (1 -> 0)]\n"
+                "  --getdatatrigpol                 Get acquisition data-driven trigger polarity\n"
+                "  --setdatatrigsel <data lane>\n"
+                "                                   Set data-driven trigger channel data lane\n"
+                "                                     [<data lane> must be one of the following:\n"
+                "                                     0 -> data lane 0, 1 -> data lane 1, 2 -> data lane 2,\n"
+                "                                     3 -> data lane 3]\n"
+                "  --getdatatrigsel                 Get data-driven trigger channel data lane\n"
+                "  --setdatatrigfilt <trigger filter>\n"
+                "                                   Set data-driven trigger hysteresis filter\n"
+                "                                     [<trigger filter> must be between the following:\n"
+                "                                     0 -> no hysteresis and <integer number (up to 2^16-1)> -> hysteresis of\n"
+                "                                     length <integer number>]\n"
+                "  --getdatatrigfilt                Get data-driven trigger hysteresis filter\n"
+                "  --setdatatrigthres <data threshold>\n"
+                "                                   Set data-driven trigger threshold\n"
+                "                                     [<data threshold> Threshold on which a data-driven trigger is generated.\n"
+                "                                     Must be between the following:\n"
+                "                                     <integer number (from -2^31 up to 2^31-1)]\n"
+                "  --getdatatrigthres               Get data-driven trigger threshold\n"
+                "  --settrigdly <trigger delay>     Set trigger delay (applies to all kinds of trigger)\n"
+                "                                     [<trigger delay> Number of ADC clock cycles to delay a trigger.\n"
+                "                                     Must be between the following:\n"
+                "                                     <integer number (from 0 up to 2^32-1)]\n"
+                "  --gettrigdly                     Get trigger delay (applies to all kinds of trigger)\n"
+                "  --genswtrig                      Generate software trigger\n"
+                "  --setsamplespre    <number of pre-trigger samples>\n"
+                "                                     [<number of pre-trigger samples> must be between 4 and\n"
                 "                                     ??? (TBD)]\n"
+                "  --setsamplespost   <number of post-trigger samples>\n"
+                "                                     [<number of post-trigger samples> must be between 4 and\n"
+                "                                     ??? (TBD)]\n"
+                "  --setnumshots      <number of shots>\n"
+                "                                     [<number of shots> must be between greater than 1]\n"
                 "  -H  --setchan      <channel>     Sets FPGA Acquisition channel\n"
                 "                                     [<channel> must be one of the following:\n"
                 "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
@@ -362,7 +416,9 @@ int main (int argc, char *argv [])
                 "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
                 "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
                 "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
-                "  -I  --acqstart                   Starts FPGA acquistion with the previous parameters\n"
+                "  -I  --acqstart                   Starts FPGA acquisition with the previous parameters\n"
+                "  --acqstop                        Stops ongoing FPGA acquisition\n"
+                "                                     <integer number (from 0 up to 2^32-1)]\n"
                 "  -K  --acqcheck                   Check if the previous acquisition is over\n"
                 "  --acqcheckpoll                   Keep checking if the acquisition is over for an amount of time\n"
                 "                                    (Requires -t <timeout>) \n"
@@ -456,7 +512,26 @@ int main (int argc, char *argv [])
         rfferpg,
         rffesetswlvl,
         rffegetswlvl,
+        setacqtrig,
+        getacqtrig,
+        setdatatrigchan,
+        getdatatrigchan,
+        setdatatrigpol,
+        getdatatrigpol,
+        setdatatrigsel,
+        getdatatrigsel,
+        setdatatrigfilt,
+        getdatatrigfilt,
+        setdatatrigthres,
+        getdatatrigthres,
+        settrigdly,
+        gettrigdly,
+        genswtrig,
+        acqstop,
         acqcheckpoll,
+        setsamplespre,
+        setsamplespost,
+        setnumshots,
         getcurve,
         fullacq,
         timeout
@@ -584,7 +659,25 @@ int main (int argc, char *argv [])
         {"rfferpg",             required_argument,   NULL, rfferpg},
         {"rffesetswlvl",        required_argument,   NULL, rffesetswlvl},
         {"rffegetswlvl",        no_argument,         NULL, rffegetswlvl},
-        {"setsamples",          required_argument,   NULL, 'E'},
+        {"setacqtrig",          required_argument,   NULL, setacqtrig},
+        {"getacqtrig",          required_argument,   NULL, getacqtrig},
+        {"setdatatrigchan",     required_argument,   NULL, setdatatrigchan},
+        {"getdatatrigchan",     required_argument,   NULL, getdatatrigchan},
+        {"setdatatrigpol",      required_argument,   NULL, setdatatrigpol},
+        {"getdatatrigpol",      required_argument,   NULL, getdatatrigpol},
+        {"setdatatrigsel",      required_argument,   NULL, setdatatrigsel},
+        {"getdatatrigsel",      required_argument,   NULL, getdatatrigsel},
+        {"setdatatrigfilt",     required_argument,   NULL, setdatatrigfilt},
+        {"getdatatrigfilt",     required_argument,   NULL, getdatatrigfilt},
+        {"setdatatrigthres",    required_argument,   NULL, setdatatrigthres},
+        {"getdatatrigthres",    required_argument,   NULL, getdatatrigthres},
+        {"settrigdly",          required_argument,   NULL, settrigdly},
+        {"gettrigdly",          required_argument,   NULL, gettrigdly},
+        {"genswtrig",           no_argument,         NULL, genswtrig},
+        {"acqstop",             no_argument,         NULL, acqstop},
+        {"setsamplespre",       required_argument,   NULL, setsamplespre},
+        {"setsamplespost",      required_argument,   NULL, setsamplespost},
+        {"setnumshots",         required_argument,   NULL, setnumshots},
         {"setchan",             required_argument,   NULL, 'H'},
         {"acqstart",            no_argument,         NULL, 'I'},
         {"acqcheck",            no_argument,         NULL, 'K'},
@@ -596,7 +689,7 @@ int main (int argc, char *argv [])
         {NULL, 0, NULL, 0}
     };
 
-    const char* shortopt = "hve:d:m:l:pP:Lc:u:U:V:nN:oO:i:D:a:b:r:R:B:M:u:U:k:j:xyqswW:tT:zZ:fF:E:H:IKA:";
+    const char* shortopt = "hve:d:m:l:pP:Lc:u:U:V:nN:oO:i:D:a:b:r:R:B:M:u:U:k:j:xyqswW:tT:zZ:fF:H:IKA:";
 
     zlist_t *call_list = zlist_new();
     if (call_list == NULL) {
@@ -1808,10 +1901,157 @@ int main (int argc, char *argv [])
 
                 /******** ACQ Module Functions ********/
 
-                /*  Set Acq Samples */
-            case 'E':
-                acq_samples_set = 1;
-                acq_samples_val =  strtoul(optarg, NULL, 10);
+            case setacqtrig:
+                item.name = ACQ_NAME_CFG_TRIG;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getacqtrig:
+                item.name = ACQ_NAME_CFG_TRIG;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case setdatatrigchan:
+                item.name = ACQ_NAME_HW_DATA_TRIG_CHAN;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getdatatrigchan:
+                item.name = ACQ_NAME_HW_DATA_TRIG_CHAN;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case setdatatrigpol:
+                item.name = ACQ_NAME_HW_DATA_TRIG_POL;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getdatatrigpol:
+                item.name = ACQ_NAME_HW_DATA_TRIG_POL;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case setdatatrigsel:
+                item.name = ACQ_NAME_HW_DATA_TRIG_SEL;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getdatatrigsel:
+                item.name = ACQ_NAME_HW_DATA_TRIG_SEL;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case setdatatrigfilt:
+                item.name = ACQ_NAME_HW_DATA_TRIG_FILT;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getdatatrigfilt:
+                item.name = ACQ_NAME_HW_DATA_TRIG_FILT;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case setdatatrigthres:
+                item.name = ACQ_NAME_HW_DATA_TRIG_THRES;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtol(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case getdatatrigthres:
+                item.name = ACQ_NAME_HW_DATA_TRIG_THRES;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case settrigdly:
+                item.name = ACQ_NAME_HW_TRIG_DLY;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = strtoul(optarg, NULL, 10);
+                append_item (call_list, item);
+                break;
+
+            case gettrigdly:
+                item.name = ACQ_NAME_HW_TRIG_DLY;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 1;
+                *item.write_val = item.rw;
+                append_item (call_list, item);
+                break;
+
+            case genswtrig:
+                item.name = ACQ_NAME_SW_TRIG;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = 1; /* Generate trigger */
+                append_item (call_list, item);
+                break;
+
+            case acqstop:
+                item.name = ACQ_NAME_FSM_STOP;
+                item.service = ACQ_MODULE_NAME;
+                item.rw = 0;
+                *item.write_val = item.rw;
+                *(item.write_val+4) = 1; /* Generate stop event */
+                append_item (call_list, item);
+                break;
+
+                /*  Set Acq Pre-trigger Samples */
+            case setsamplespre:
+                acq_samples_pre_set = 1;
+                acq_samples_pre_val =  strtoul(optarg, NULL, 10);
+                break;
+
+            case setsamplespost:
+                acq_samples_post_set = 1;
+                acq_samples_post_val =  strtoul(optarg, NULL, 10);
+                break;
+
+            case setnumshots:
+                acq_num_shots_set = 1;
+                acq_num_shots_val =  strtoul(optarg, NULL, 10);
                 break;
 
                 /*  Set Acq Chan */
@@ -1889,24 +2129,26 @@ int main (int argc, char *argv [])
         bpm_number = strtoul (bpm_number_str, NULL, 10);
     }
 
+    acq_samples_set = acq_samples_pre_set && acq_samples_post_set && acq_num_shots_set;
+
     /* Both Acq Chan and Acq Samples must be set or none of them */
     if ((acq_samples_set && !acq_chan_set) || (!acq_samples_set && acq_chan_set)) {
-        fprintf(stderr, "%s: If --setsamples or --setchan is set the other must be too!\n", program_name);
+        fprintf(stderr, "%s: If --setsamples<pre|post>, --setnumshots or --setchan is set the others must be too!\n", program_name);
         exit(EXIT_FAILURE);
     }
 
     if ( (acq_start || acq_get_block || acq_get_curve || acq_full_call) && (!acq_samples_set || !acq_chan_set)) {
         if (acq_start) {
-            fprintf(stderr, "%s: If --acqstart is requested, --setchan and --setsamples must be set!\n", program_name);
+            fprintf(stderr, "%s: If --acqstart is requested, setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
             }
         if (acq_get_block) {
-            fprintf(stderr, "%s: To receive a data block, --setsamples and --setchan must be set!\n", program_name);
+            fprintf(stderr, "%s: To receive a data block, setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
             }
         if (acq_get_curve) {
-            fprintf(stderr, "%s: To receive a data curve, --setsamples and --setchan must be set!\n", program_name);
+            fprintf(stderr, "%s: To receive a data curve, --setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
             }
         if (acq_full_call) {
-            fprintf(stderr, "%s: If --fullacq is requested, --setchan and --setsamples must be set!\n", program_name);
+            fprintf(stderr, "%s: If --fullacq is requested, --setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
             }
         exit(EXIT_FAILURE);
     }
@@ -1969,13 +2211,17 @@ int main (int argc, char *argv [])
     sprintf (acq_service, "BPM%u:DEVIO:ACQ%u", board_number, bpm_number);
 
     /* Request data acquisition on server */
+    acq_total_samples_val = (acq_samples_pre_val+acq_samples_post_val)*acq_num_shots_val;
 
     if (acq_start) {
     /* Wrap the data request parameters */
         acq_req_t acq_req = {
-            acq_samples_val,
-            acq_chan_val
+            .num_samples_pre = acq_samples_pre_val,
+            .num_samples_post = acq_samples_post_val,
+            .num_shots = acq_num_shots_val,
+            .chan = acq_chan_val
         };
+
         bpm_client_err_e err = bpm_acq_start(bpm_client, acq_service, &acq_req);
         if (err != BPM_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: '%s'\n", bpm_client_err_str(err));
@@ -1997,7 +2243,7 @@ int main (int argc, char *argv [])
 
     /* Retrieve specific data block */
     if (acq_get_block) {
-        uint32_t data_size = acq_samples_val*acq_chan[acq_chan_val].sample_size;
+        uint32_t data_size = acq_total_samples_val*acq_chan[acq_chan_val].sample_size;
         uint32_t *valid_data = (uint32_t *) zmalloc (data_size*sizeof (uint8_t));
         acq_trans_t acq_trans = {
             .req = {
@@ -2023,13 +2269,15 @@ int main (int argc, char *argv [])
 
     /* Returns a whole data curve */
     if (acq_get_curve) {
-        uint32_t data_size = acq_samples_val*acq_chan[acq_chan_val].sample_size;
+        uint32_t data_size = acq_total_samples_val*acq_chan[acq_chan_val].sample_size;
         uint32_t *valid_data = (uint32_t *) zmalloc (data_size*sizeof (uint8_t));
 
         acq_trans_t acq_trans = {
             .req = {
-                .chan = acq_chan_val,
-                .num_samples = acq_samples_val },
+                .num_samples_pre = acq_samples_pre_val,
+                .num_samples_post = acq_samples_post_val,
+                .num_shots = acq_num_shots_val,
+                .chan = acq_chan_val  },
             .block = {
                 .data = valid_data,
                 .data_size = data_size }
@@ -2050,13 +2298,15 @@ int main (int argc, char *argv [])
 
     /* Perform a full acquisition routine and return a data curve */
     if (acq_full_call) {
-        uint32_t data_size = acq_samples_val*acq_chan[acq_chan_val].sample_size;
+        uint32_t data_size = acq_total_samples_val*acq_chan[acq_chan_val].sample_size;
         uint32_t *valid_data = (uint32_t *) zmalloc (data_size*sizeof (uint8_t));
 
         acq_trans_t acq_trans = {
             .req = {
-                .chan = acq_chan_val,
-                .num_samples = acq_samples_val },
+                .num_samples_pre = acq_samples_pre_val,
+                .num_samples_post = acq_samples_post_val,
+                .num_shots = acq_num_shots_val,
+                .chan = acq_chan_val  },
             .block = {
                 .data = valid_data,
                 .data_size = data_size }
