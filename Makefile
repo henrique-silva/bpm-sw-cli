@@ -28,6 +28,16 @@ CFLAGS_DEBUG += -g
 CFLAGS_PLATFORM = -Wall -Wextra -Werror
 LDFLAGS_PLATFORM =
 
+# Suppress warnings from preprocessor, such as the ones liberrhand emits
+# when not setting DBG_LVL
+ifeq ($(CC),$(filter $(CC),gcc cc))
+CFLAGS_PLATFORM += -Wno-cpp
+endif
+
+ifeq ($(CC),clang)
+CFLAGS_PLATFORM += -Wno-error=\#warnings
+endif
+
 # Libraries
 LIBS = -lbpmclient -lmlm -lerrhand -lhutils -lczmq -lzmq
 
