@@ -229,7 +229,7 @@ inv_function:
     return err;
 }
 
-void print_usage (FILE* stream, int exit_code)
+void print_usage (const char *program_name, FILE* stream, int exit_code)
 {
     /* FIXME: Add the RFFE module functions' help information */
     fprintf (stream, "BPM Client program\n");
@@ -710,7 +710,7 @@ int main (int argc, char *argv [])
         {
                 /* Display Help */
             case 'h':
-                print_usage(stderr, 0);
+                print_usage(program_name, stderr, 0);
 
                 /* Define Verbosity level */
             case 'v':
@@ -2101,7 +2101,7 @@ int main (int argc, char *argv [])
 
             default:
                 fprintf(stderr, "%s: bad option\n", program_name);
-                print_usage(stderr, 1);
+                print_usage(program_name, stderr, 1);
         }
     }
 
