@@ -229,6 +229,432 @@ inv_function:
     return err;
 }
 
+void print_usage (FILE* stream, int exit_code)
+{
+    /* FIXME: Add the RFFE module functions' help information */
+    fprintf (stream, "BPM Client program\n");
+    fprintf (stream, "Usage:  %s options \n", program_name);
+    fprintf (stream,
+            "  -h  --help                       Display this usage information.\n"
+            "  -v  --verbose                    Print verbose messages.\n"
+            "  -e  --endpoint <endpoint>        Define broker endpoint\n"
+            "  -d  --board <number>             Define the target AFC board\n"
+            "  -m  --bpm <0 | 1>                Define the target FMC board\n"
+            "  -l  --leds <value>               Set board leds\n"
+            "                                    [value must be between 0 and 7 (3 bits),\n"
+            "                                     each bit sets one rgb led color\n"
+            "  -p  --getpll                     Get PLL value\n"
+            "  -P  --setpll <value>             Set PLL value\n"
+            "  -L  --ad9510default              Set AD9510 to default values\n"
+            "  -c  --getadcdata                 Get ADC data\n"
+            "  --getdlyval                      Get delay value\n"
+            "  --setdlyval <value>              Set delay value\n"
+            "  --getdlyline                     Get delay line\n"
+            "  --setdlyline <value>             Set delay line\n"
+            "  --getdlyupdt                     Get delay update\n"
+            "  --setdlyupdt <value>             Set delay update\n"
+            "  -V  --setadcdly <value>          Set ADC delay\n"
+            "  -n  --getadctest                 Get ADC test\n"
+            "  -N  --setadctest <value>         Set ADC test\n"
+            "  -o  --getsi571oe                 Get SI571 OE\n"
+            "  -O  --setsi571oe <value>         Set SI571 OE\n"
+            "  -i  --setsi571freq <value [Hz]>  Set SI571 frequency\n"
+            "  -D  --si571default               Set SI571 to default values\n"
+            "  -a  --setad9510plladiv <value>   Set AD9510 PLL A Divider\n"
+            "  -b  --setad9510pllbdiv <value>   Set AD9510 PLL B Divider\n"
+            "  -r  --setad9510pllpresc <value>  Set AD9510 PLL Prescaler\n"
+            "  -R  --setad9510rdiv <value>      Set AD9510 R Divider\n"
+            "  -B  --setad9510pdown <value>     Set AD9510 PDown\n"
+            "  -M  --setad9510mux <value>       Set AD9510 Multiplexer\n"
+            "  -u  --setad9510cpcurr <value>    Set AD9510 CP Current\n"
+            "  -U  --setad9510outputs <value>   Set AD9510 Outputs\n"
+            "  -k  --setad9510pllclksel <value> Set AD9510 PLL Clock Selection\n"
+            "  --getkx                          Get KX value\n"
+            "  --setkx <value>                  Set KX value\n"
+            "  --getky                          Get KY value\n"
+            "  --setky <value>                  Set KY value\n"
+            "  --getksum                        Get KSUM value\n"
+            "  --setksum <value>                Set KSUM value\n"
+            "  --gettbtth                       Get TBT threshold value\n"
+            "  --settbtth <value>               Set TBT threshold value\n"
+            "  --getfofbth                      Get FOFB threshold value\n"
+            "  --setfofbth <value>              Set FOFB threshold value\n"
+            "  --getmonitth                     Get Monitoring threshold value\n"
+            "  --setmonitth <value>             Set Monitoring threshold value\n"
+            "  -j  --getmonitamp                Get Monitoring amplitude\n"
+            "  -x  --getmonitposx               Get Monitoring X position\n"
+            "  -y  --getmonitposy               Get Monitoring Y position\n"
+            "  -q  --getmonitposq               Get Monitoring position Q\n"
+            "  -s  --getmonitpossum             Get Monitoring position Sum\n"
+            "  -w  --getsw                      Get SW status\n"
+            "  -W  --setsw <value>              Set SW status\n"
+            "  -t  --getswen                    Get SW Enable status\n"
+            "  -T  --setswen < 0|1 >            Set SW Enable\n"
+            "  -z  --getdivclk                  Get divider clock\n"
+            "  -Z  --setdivclk <value>          Set divider clock\n"
+            "  -f  --getswdly                   Get SW delay\n"
+            "  -F  --setswdly <value>           Set SW delay\n"
+            "  --getwdwen                       Get WDW Enable status\n"
+            "  --setwdwen < 0|1 >               Set WDW Enable\n"
+            "  --getwdwdly                      Get WDW delay\n"
+            "  --setwdwdly <value>              Set WDW delay\n"
+            "  --getgain[chan]                  Get RF Gain\n"
+            "                                     [chan must be a, b, c, or d]\n"
+            "  --setgain[chan] <value [db]>     Set RF Gain\n"
+            "                                     [chan must be a, b, c, or d]\n"
+            "  --rffesetsw <mode (0-3)>         Set RFFE Switching mode\n"
+            "  --rffegetsw                      Get RFFE Switching mode\n"
+            "  --rffesetatt <0-31.5 [dB] >    Set RFFE attenuation\n"
+            "  --rffegetatt                     Get RFFE attenuation\n"
+            "  --rffesettemp  <chan=(1|2), value=[degrees]>\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "                                   Set RFFE board temperature\n"
+            "  --rffegettemp  <chan=(1|2)>      Get RFFE board temperature\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "  --rffesetpoint <chan=(1|2), value=[degrees]>\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "                                   Set RFFE Temperature set-point\n"
+            "  --rffegetpoint <chan=(1|2)>      Get RFFE Temperature set-point\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "  --rffesettempctr < 0|1 >         Set RFFE Temperature control status\n"
+            "  --rffegettempctr                 Get RFFE Temperature control status\n"
+            "  --rffesetout <chan=(1|2), value=[degrees]>\n"
+            "                                   Set RFFE Voltage signal in the heater\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "  --rffegetout <chan=(1|2)>        Get RFFE Voltage signal in the heater\n"
+            "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
+            "  --rffereset                      Resets the RFFE controller\n"
+            "  --setacqtrig <type>              Set acquisition trigger type\n"
+            "                                     [<type> must be one of the following:\n"
+            "                                     0 -> skip trigger; 1 -> wait for external trigger\n"
+            "                                     2 -> wait for data-driven trigger; 3 -> wait for software trigger]\n"
+            "  --getacqtrig                     Get acquisition trigger type\n"
+            "  --setdatatrigchan <data-driven trigger channel>\n"
+            "                                   Set data-driven trigger channel to monitor\n"
+            "                                     [<data-driven trigger channel> Channel number to monitor for a over/under threshold event.\n"
+            "                                     Must be between the following:\n"
+            "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
+            "                                     4 -> TBT Decim IQ120; 5 -> TBT Decim IQ340; 6 -> TBT Amp;\n"
+            "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
+            "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
+            "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
+            "  --getdatatrigchan                Get data-driven trigger channel to monitor\n"
+            "  --setdatatrigpol <polarity>      Set acquisition data-driven trigger polarity\n"
+            "                                     [<polarity> must be one of the following:\n"
+            "                                     0 -> positive edge (0 -> 1), 1 -> negative edge (1 -> 0)]\n"
+            "  --getdatatrigpol                 Get acquisition data-driven trigger polarity\n"
+            "  --setdatatrigsel <data lane>\n"
+            "                                   Set data-driven trigger channel data lane\n"
+            "                                     [<data lane> must be one of the following:\n"
+            "                                     0 -> data lane 0, 1 -> data lane 1, 2 -> data lane 2,\n"
+            "                                     3 -> data lane 3]\n"
+            "  --getdatatrigsel                 Get data-driven trigger channel data lane\n"
+            "  --setdatatrigfilt <trigger filter>\n"
+            "                                   Set data-driven trigger hysteresis filter\n"
+            "                                     [<trigger filter> must be between the following:\n"
+            "                                     0 -> no hysteresis and <integer number (up to 2^16-1)> -> hysteresis of\n"
+            "                                     length <integer number>]\n"
+            "  --getdatatrigfilt                Get data-driven trigger hysteresis filter\n"
+            "  --setdatatrigthres <data threshold>\n"
+            "                                   Set data-driven trigger threshold\n"
+            "                                     [<data threshold> Threshold on which a data-driven trigger is generated.\n"
+            "                                     Must be between the following:\n"
+            "                                     <integer number (from -2^31 up to 2^31-1)]\n"
+            "  --getdatatrigthres               Get data-driven trigger threshold\n"
+            "  --settrigdly <trigger delay>     Set trigger delay (applies to all kinds of trigger)\n"
+            "                                     [<trigger delay> Number of ADC clock cycles to delay a trigger.\n"
+            "                                     Must be between the following:\n"
+            "                                     <integer number (from 0 up to 2^32-1)]\n"
+            "  --gettrigdly                     Get trigger delay (applies to all kinds of trigger)\n"
+            "  --genswtrig                      Generate software trigger\n"
+            "  --setsamplespre    <number of pre-trigger samples>\n"
+            "                                     [<number of pre-trigger samples> must be between 4 and\n"
+            "                                     ??? (TBD)]\n"
+            "  --setsamplespost   <number of post-trigger samples>\n"
+            "                                     [<number of post-trigger samples> must be between 4 and\n"
+            "                                     ??? (TBD)]\n"
+            "  --setnumshots      <number of shots>\n"
+            "                                     [<number of shots> must be between greater than 1]\n"
+            "  -H  --setchan      <channel>     Sets FPGA Acquisition channel\n"
+            "                                     [<channel> must be one of the following:\n"
+            "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
+            "                                     4 -> TBT Decim IQ120; 5 -> TBT Decim IQ340; 6 -> TBT Amp;\n"
+            "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
+            "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
+            "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
+            "  -I  --acqstart                   Starts FPGA acquisition with the previous parameters\n"
+            "  --acqstop                        Stops ongoing FPGA acquisition\n"
+            "                                     <integer number (from 0 up to 2^32-1)]\n"
+            "  -K  --acqcheck                   Check if the previous acquisition is over\n"
+            "  --acqcheckpoll                   Keep checking if the acquisition is over for an amount of time\n"
+            "                                    (Requires -t <timeout>) \n"
+            "  -A  --getblock <block number>    Get specified data block from server \n"
+            "  --getcurve                       Get a whole data curve \n"
+            "  --fullacq                        Perform a full acquisition\n"
+            "  --timeout    <timeout [s]>       Sets the timeout for the polling function\n"
+            );
+    exit (exit_code);
+}
+
+/* Long-only options */
+enum {
+    pllstatus = 1000,
+    getclksel,
+    setclksel,
+    getadcrand,
+    setadcrand,
+    getadcdith,
+    setadcdith,
+    getadcshdn,
+    setadcshdn,
+    getadcpga,
+    setadcpga,
+    getdlyval,
+    setdlyval,
+    getdlyline,
+    setdlyline,
+    getdlyupdt,
+    setdlyupdt,
+    gettrigdir,
+    settrigdir,
+    gettrigterm,
+    settrigterm,
+    gettrigval,
+    settrigval,
+    getad9510plladiv,
+    getad9510pllbdiv,
+    getad9510pllpresc,
+    getad9510pllrdiv,
+    getad9510pllpdown,
+    getad9510mux,
+    getad9510cpcurr,
+    getad9510outputs,
+    getad9510pllclksel,
+    setkx,
+    getkx,
+    setky,
+    getky,
+    setksum,
+    getksum,
+    settbtth,
+    gettbtth,
+    setfofbth,
+    getfofbth,
+    setmonitth,
+    getmonitth,
+    setwdwen,
+    getwdwen,
+    setwdwdly,
+    getwdwdly,
+    setgainaa,
+    getgainaa,
+    setgainac,
+    getgainac,
+    setgaincc,
+    getgaincc,
+    setgainca,
+    getgainca,
+    setgainbb,
+    getgainbb,
+    setgaindd,
+    getgaindd,
+    setgainbd,
+    getgainbd,
+    setgaindb,
+    getgaindb,
+    rffesetsw,
+    rffegetsw,
+    rffesetatt,
+    rffegetatt,
+    rffesettemp,
+    rffegettemp,
+    rffesetpnt,
+    rffegetpnt,
+    rffesettempctr,
+    rffegettempctr,
+    rffesetout,
+    rffegetout,
+    rffereset,
+    rfferpg,
+    rffesetswlvl,
+    rffegetswlvl,
+    setacqtrig,
+    getacqtrig,
+    setdatatrigchan,
+    getdatatrigchan,
+    setdatatrigpol,
+    getdatatrigpol,
+    setdatatrigsel,
+    getdatatrigsel,
+    setdatatrigfilt,
+    getdatatrigfilt,
+    setdatatrigthres,
+    getdatatrigthres,
+    settrigdly,
+    gettrigdly,
+    genswtrig,
+    acqstop,
+    acqcheckpoll,
+    setsamplespre,
+    setsamplespost,
+    setnumshots,
+    getcurve,
+    fullacq,
+    timeout
+};
+
+/* TODO: Check which 'set' functions are boolean and set them without the need of an entry value */
+static struct option long_options[] =
+{
+    {"help",                no_argument,         NULL, 'h'},
+    {"verbose",             no_argument,         NULL, 'v'},
+    {"endpoint",            required_argument,   NULL, 'e'},
+    {"board",               required_argument,   NULL, 'd'},
+    {"bpm",                 required_argument,   NULL, 'm'},
+    {"leds",                required_argument,   NULL, 'l'},
+    {"pllstatus",           no_argument,         NULL, pllstatus},
+    {"getpll",              no_argument,         NULL, 'p'},
+    {"setpll",              required_argument,   NULL, 'P'},
+    {"ad9510default",       no_argument,         NULL, 'L'},
+    {"getclksel",           no_argument,         NULL, getclksel},
+    {"setclksel",           required_argument,   NULL, setclksel},
+    {"getadcrand",          no_argument,         NULL, getadcrand},
+    {"setadcrand",          required_argument,   NULL, setadcrand},
+    {"getadcdith",          no_argument,         NULL, getadcdith},
+    {"setadcdith",          required_argument,   NULL, setadcdith},
+    {"getadcshdn",          no_argument,         NULL, getadcshdn},
+    {"setadcshdn",          required_argument,   NULL, setadcshdn},
+    {"getadcpga",           no_argument,         NULL, getadcpga},
+    {"setadcpga",           required_argument,   NULL, setadcpga},
+    {"getadcdata",          required_argument,   NULL, 'c'},
+    {"getdlyval",           required_argument,   NULL, getdlyval},
+    {"setdlyval",           required_argument,   NULL, setdlyval},
+    {"getdlyline",          required_argument,   NULL, getdlyline},
+    {"setdlyline",          required_argument,   NULL, setdlyline},
+    {"getdlyupdt",          required_argument,   NULL, getdlyupdt},
+    {"setdlyupdt",          required_argument,   NULL, setdlyupdt},
+    {"setadcdly",           required_argument,   NULL, 'V'},
+    {"gettestdata",         no_argument,         NULL, 'n'},
+    {"settestdata",         required_argument,   NULL, 'N'},
+    {"getsi571oe",          no_argument,         NULL, 'o'},
+    {"setsi571oe",          required_argument,   NULL, 'O'},
+    {"setsi571freq",        required_argument,   NULL, 'i'},
+    {"si571default",        required_argument,   NULL, 'D'},
+    {"gettrigdir",          no_argument,         NULL, gettrigdir},
+    {"settrigdir",          required_argument,   NULL, settrigdir},
+    {"gettrigterm",         no_argument,         NULL, gettrigterm},
+    {"settrigterm",         required_argument,   NULL, settrigterm},
+    {"gettrigval",          no_argument,         NULL, gettrigval},
+    {"settrigval",          required_argument,   NULL, settrigval},
+    {"getad9510plladiv",    no_argument,         NULL, getad9510plladiv},
+    {"setad9510plladiv",    required_argument,   NULL, 'a'},
+    {"getad9510pllbdiv",    no_argument,         NULL, getad9510pllbdiv},
+    {"setad9510pllbdiv",    required_argument,   NULL, 'b'},
+    {"getad9510pllpresc",   no_argument,         NULL, getad9510pllpresc},
+    {"setad9510pllpresc",   required_argument,   NULL, 'r'},
+    {"getad9510rdiv",       no_argument,         NULL, getad9510pllrdiv},
+    {"setad9510rdiv",       required_argument,   NULL, 'R'},
+    {"getad9510pllpdown",   no_argument,         NULL, getad9510pllpdown},
+    {"setad9510pllpdown",   required_argument,   NULL, 'B'},
+    {"getad9510mux",        no_argument,         NULL, getad9510mux},
+    {"setad9510mux",        required_argument,   NULL, 'M'},
+    {"getad9510cpcurr",     no_argument,         NULL, getad9510cpcurr},
+    {"setad9510cpcurr",     required_argument,   NULL, 'u'},
+    {"getad9510outputs",    no_argument,         NULL, getad9510outputs},
+    {"setad9510outputs",    required_argument,   NULL, 'U'},
+    {"getad9510pllclksel",  no_argument,         NULL, getad9510pllclksel},
+    {"setad9510pllclksel",  required_argument,   NULL, 'k'},
+    {"setkx",               required_argument,   NULL, setkx},
+    {"getkx",               no_argument,         NULL, getkx},
+    {"setky",               required_argument,   NULL, setky},
+    {"getky",               no_argument,         NULL, getky},
+    {"setksum",             required_argument,   NULL, setksum},
+    {"getksum",             no_argument,         NULL, getksum},
+    {"settbtth",            required_argument,   NULL, settbtth},
+    {"gettbtth",            no_argument,         NULL, gettbtth},
+    {"setfofbth",           required_argument,   NULL, setfofbth},
+    {"getfofbth",           no_argument,         NULL, getfofbth},
+    {"setmonitth",          required_argument,   NULL, setmonitth},
+    {"getmonitth",          no_argument,         NULL, getmonitth},
+    {"getmonitamp",         required_argument,   NULL, 'j'},
+    {"getmonitposx",        required_argument,   NULL, 'x'},
+    {"getmonitposy",        required_argument,   NULL, 'y'},
+    {"getmonitposq",        required_argument,   NULL, 'q'},
+    {"getmonitpossum",      required_argument,   NULL, 's'},
+    {"setsw",               required_argument,   NULL, 'W'},
+    {"getsw",               no_argument,         NULL, 'w'},
+    {"setswen",             required_argument,   NULL, 'T'},
+    {"getswen",             no_argument,         NULL, 't'},
+    {"setdivclk",           required_argument,   NULL, 'Z'},
+    {"getdivclk",           no_argument,         NULL, 'z'},
+    {"setswdly",            required_argument,   NULL, 'F'},
+    {"getswdly",            no_argument,         NULL, 'f'},
+    {"setwdwen",            required_argument,   NULL, setwdwen},
+    {"getwdwen",            no_argument,         NULL, getwdwen},
+    {"setwdwdly",           required_argument,   NULL, setwdwdly},
+    {"getwdwdly",           no_argument,         NULL, getwdwdly},
+    {"setgainaa",           required_argument,   NULL, setgainaa},
+    {"getgainaa",           no_argument,         NULL, getgainaa},
+    {"setgainac",           required_argument,   NULL, setgainac},
+    {"getgainac",           no_argument,         NULL, getgainac},
+    {"setgainbb",           required_argument,   NULL, setgainbb},
+    {"getgainbb",           no_argument,         NULL, getgainbb},
+    {"setgainbd",           required_argument,   NULL, setgainbd},
+    {"getgainbd",           no_argument,         NULL, getgainbd},
+    {"setgaincc",           required_argument,   NULL, setgaincc},
+    {"getgaincc",           no_argument,         NULL, getgaincc},
+    {"setgainca",           required_argument,   NULL, setgainca},
+    {"getgainca",           no_argument,         NULL, getgainca},
+    {"setgaindd",           required_argument,   NULL, setgaindd},
+    {"getgaindd",           no_argument,         NULL, getgaindd},
+    {"setgaindb",           required_argument,   NULL, setgaindb},
+    {"getgaindb",           no_argument,         NULL, getgaindb},
+    {"rffesetsw",           required_argument,   NULL, rffesetsw},
+    {"rffegetsw",           no_argument,         NULL, rffegetsw},
+    {"rffesetatt",          required_argument,   NULL, rffesetatt},
+    {"rffegetatt",          required_argument,   NULL, rffegetatt},
+    {"rffesettemp",         required_argument,   NULL, rffesettemp},
+    {"rffegettemp",         required_argument,   NULL, rffegettemp},
+    {"rffesetpnt",          required_argument,   NULL, rffesetpnt},
+    {"rffegetpnt",          required_argument,   NULL, rffegetpnt},
+    {"rffesettempctr",      required_argument,   NULL, rffesettempctr},
+    {"rffegettempctr",      no_argument,         NULL, rffegettempctr},
+    {"rffesetout",          required_argument,   NULL, rffesetout},
+    {"rffegetout",          required_argument,   NULL, rffegetout},
+    {"rffereset",           required_argument,   NULL, rffereset},
+    {"rfferpg",             required_argument,   NULL, rfferpg},
+    {"rffesetswlvl",        required_argument,   NULL, rffesetswlvl},
+    {"rffegetswlvl",        no_argument,         NULL, rffegetswlvl},
+    {"setacqtrig",          required_argument,   NULL, setacqtrig},
+    {"getacqtrig",          required_argument,   NULL, getacqtrig},
+    {"setdatatrigchan",     required_argument,   NULL, setdatatrigchan},
+    {"getdatatrigchan",     required_argument,   NULL, getdatatrigchan},
+    {"setdatatrigpol",      required_argument,   NULL, setdatatrigpol},
+    {"getdatatrigpol",      required_argument,   NULL, getdatatrigpol},
+    {"setdatatrigsel",      required_argument,   NULL, setdatatrigsel},
+    {"getdatatrigsel",      required_argument,   NULL, getdatatrigsel},
+    {"setdatatrigfilt",     required_argument,   NULL, setdatatrigfilt},
+    {"getdatatrigfilt",     required_argument,   NULL, getdatatrigfilt},
+    {"setdatatrigthres",    required_argument,   NULL, setdatatrigthres},
+    {"getdatatrigthres",    required_argument,   NULL, getdatatrigthres},
+    {"settrigdly",          required_argument,   NULL, settrigdly},
+    {"gettrigdly",          required_argument,   NULL, gettrigdly},
+    {"genswtrig",           no_argument,         NULL, genswtrig},
+    {"acqstop",             no_argument,         NULL, acqstop},
+    {"setsamplespre",       required_argument,   NULL, setsamplespre},
+    {"setsamplespost",      required_argument,   NULL, setsamplespost},
+    {"setnumshots",         required_argument,   NULL, setnumshots},
+    {"setchan",             required_argument,   NULL, 'H'},
+    {"acqstart",            no_argument,         NULL, 'I'},
+    {"acqcheck",            no_argument,         NULL, 'K'},
+    {"acqcheckpoll",        no_argument,         NULL, acqcheckpoll},
+    {"getblock",            required_argument,   NULL, 'A'},
+    {"getcurve",            no_argument,         NULL, getcurve},
+    {"fullacq",             no_argument,         NULL, fullacq},
+    {"timeout",             required_argument,   NULL, timeout},
+    {NULL, 0, NULL, 0}
+};
+
 int main (int argc, char *argv [])
 {
     int ch;
@@ -263,431 +689,6 @@ int main (int argc, char *argv [])
     int check_poll = 0;
     uint32_t poll_timeout = 0;
 
-    void print_usage (FILE* stream, int exit_code)
-    {
-        /* FIXME: Add the RFFE module functions' help information */
-        fprintf (stream, "BPM Client program\n");
-        fprintf (stream, "Usage:  %s options \n", program_name);
-        fprintf (stream,
-                "  -h  --help                       Display this usage information.\n"
-                "  -v  --verbose                    Print verbose messages.\n"
-                "  -e  --endpoint <endpoint>        Define broker endpoint\n"
-                "  -d  --board <number>             Define the target AFC board\n"
-                "  -m  --bpm <0 | 1>                Define the target FMC board\n"
-                "  -l  --leds <value>               Set board leds\n"
-                "                                    [value must be between 0 and 7 (3 bits),\n"
-                "                                     each bit sets one rgb led color\n"
-                "  -p  --getpll                     Get PLL value\n"
-                "  -P  --setpll <value>             Set PLL value\n"
-                "  -L  --ad9510default              Set AD9510 to default values\n"
-                "  -c  --getadcdata                 Get ADC data\n"
-                "  --getdlyval                      Get delay value\n"
-                "  --setdlyval <value>              Set delay value\n"
-                "  --getdlyline                     Get delay line\n"
-                "  --setdlyline <value>             Set delay line\n"
-                "  --getdlyupdt                     Get delay update\n"
-                "  --setdlyupdt <value>             Set delay update\n"
-                "  -V  --setadcdly <value>          Set ADC delay\n"
-                "  -n  --getadctest                 Get ADC test\n"
-                "  -N  --setadctest <value>         Set ADC test\n"
-                "  -o  --getsi571oe                 Get SI571 OE\n"
-                "  -O  --setsi571oe <value>         Set SI571 OE\n"
-                "  -i  --setsi571freq <value [Hz]>  Set SI571 frequency\n"
-                "  -D  --si571default               Set SI571 to default values\n"
-                "  -a  --setad9510plladiv <value>   Set AD9510 PLL A Divider\n"
-                "  -b  --setad9510pllbdiv <value>   Set AD9510 PLL B Divider\n"
-                "  -r  --setad9510pllpresc <value>  Set AD9510 PLL Prescaler\n"
-                "  -R  --setad9510rdiv <value>      Set AD9510 R Divider\n"
-                "  -B  --setad9510pdown <value>     Set AD9510 PDown\n"
-                "  -M  --setad9510mux <value>       Set AD9510 Multiplexer\n"
-                "  -u  --setad9510cpcurr <value>    Set AD9510 CP Current\n"
-                "  -U  --setad9510outputs <value>   Set AD9510 Outputs\n"
-                "  -k  --setad9510pllclksel <value> Set AD9510 PLL Clock Selection\n"
-                "  --getkx                          Get KX value\n"
-                "  --setkx <value>                  Set KX value\n"
-                "  --getky                          Get KY value\n"
-                "  --setky <value>                  Set KY value\n"
-                "  --getksum                        Get KSUM value\n"
-                "  --setksum <value>                Set KSUM value\n"
-                "  --gettbtth                       Get TBT threshold value\n"
-                "  --settbtth <value>               Set TBT threshold value\n"
-                "  --getfofbth                      Get FOFB threshold value\n"
-                "  --setfofbth <value>              Set FOFB threshold value\n"
-                "  --getmonitth                     Get Monitoring threshold value\n"
-                "  --setmonitth <value>             Set Monitoring threshold value\n"
-                "  -j  --getmonitamp                Get Monitoring amplitude\n"
-                "  -x  --getmonitposx               Get Monitoring X position\n"
-                "  -y  --getmonitposy               Get Monitoring Y position\n"
-                "  -q  --getmonitposq               Get Monitoring position Q\n"
-                "  -s  --getmonitpossum             Get Monitoring position Sum\n"
-                "  -w  --getsw                      Get SW status\n"
-                "  -W  --setsw <value>              Set SW status\n"
-                "  -t  --getswen                    Get SW Enable status\n"
-                "  -T  --setswen < 0|1 >            Set SW Enable\n"
-                "  -z  --getdivclk                  Get divider clock\n"
-                "  -Z  --setdivclk <value>          Set divider clock\n"
-                "  -f  --getswdly                   Get SW delay\n"
-                "  -F  --setswdly <value>           Set SW delay\n"
-                "  --getwdwen                       Get WDW Enable status\n"
-                "  --setwdwen < 0|1 >               Set WDW Enable\n"
-                "  --getwdwdly                      Get WDW delay\n"
-                "  --setwdwdly <value>              Set WDW delay\n"
-                "  --getgain[chan]                  Get RF Gain\n"
-                "                                     [chan must be a, b, c, or d]\n"
-                "  --setgain[chan] <value [db]>     Set RF Gain\n"
-                "                                     [chan must be a, b, c, or d]\n"
-                "  --rffesetsw <mode (0-3)>         Set RFFE Switching mode\n"
-                "  --rffegetsw                      Get RFFE Switching mode\n"
-                "  --rffesetatt <0-31.5 [dB] >    Set RFFE attenuation\n"
-                "  --rffegetatt                     Get RFFE attenuation\n"
-                "  --rffesettemp  <chan=(1|2), value=[degrees]>\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "                                   Set RFFE board temperature\n"
-                "  --rffegettemp  <chan=(1|2)>      Get RFFE board temperature\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "  --rffesetpoint <chan=(1|2), value=[degrees]>\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "                                   Set RFFE Temperature set-point\n"
-                "  --rffegetpoint <chan=(1|2)>      Get RFFE Temperature set-point\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "  --rffesettempctr < 0|1 >         Set RFFE Temperature control status\n"
-                "  --rffegettempctr                 Get RFFE Temperature control status\n"
-                "  --rffesetout <chan=(1|2), value=[degrees]>\n"
-                "                                   Set RFFE Voltage signal in the heater\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "  --rffegetout <chan=(1|2)>        Get RFFE Voltage signal in the heater\n"
-                "                                   (chan=1 -> A/C ; chan=2 -> B/D)\n"
-                "  --rffereset                      Resets the RFFE controller\n"
-                "  --setacqtrig <type>              Set acquisition trigger type\n"
-                "                                     [<type> must be one of the following:\n"
-                "                                     0 -> skip trigger; 1 -> wait for external trigger\n"
-                "                                     2 -> wait for data-driven trigger; 3 -> wait for software trigger]\n"
-                "  --getacqtrig                     Get acquisition trigger type\n"
-                "  --setdatatrigchan <data-driven trigger channel>\n"
-                "                                   Set data-driven trigger channel to monitor\n"
-                "                                     [<data-driven trigger channel> Channel number to monitor for a over/under threshold event.\n"
-                "                                     Must be between the following:\n"
-                "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
-                "                                     4 -> TBT Decim IQ120; 5 -> TBT Decim IQ340; 6 -> TBT Amp;\n"
-                "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
-                "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
-                "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
-                "  --getdatatrigchan                Get data-driven trigger channel to monitor\n"
-                "  --setdatatrigpol <polarity>      Set acquisition data-driven trigger polarity\n"
-                "                                     [<polarity> must be one of the following:\n"
-                "                                     0 -> positive edge (0 -> 1), 1 -> negative edge (1 -> 0)]\n"
-                "  --getdatatrigpol                 Get acquisition data-driven trigger polarity\n"
-                "  --setdatatrigsel <data lane>\n"
-                "                                   Set data-driven trigger channel data lane\n"
-                "                                     [<data lane> must be one of the following:\n"
-                "                                     0 -> data lane 0, 1 -> data lane 1, 2 -> data lane 2,\n"
-                "                                     3 -> data lane 3]\n"
-                "  --getdatatrigsel                 Get data-driven trigger channel data lane\n"
-                "  --setdatatrigfilt <trigger filter>\n"
-                "                                   Set data-driven trigger hysteresis filter\n"
-                "                                     [<trigger filter> must be between the following:\n"
-                "                                     0 -> no hysteresis and <integer number (up to 2^16-1)> -> hysteresis of\n"
-                "                                     length <integer number>]\n"
-                "  --getdatatrigfilt                Get data-driven trigger hysteresis filter\n"
-                "  --setdatatrigthres <data threshold>\n"
-                "                                   Set data-driven trigger threshold\n"
-                "                                     [<data threshold> Threshold on which a data-driven trigger is generated.\n"
-                "                                     Must be between the following:\n"
-                "                                     <integer number (from -2^31 up to 2^31-1)]\n"
-                "  --getdatatrigthres               Get data-driven trigger threshold\n"
-                "  --settrigdly <trigger delay>     Set trigger delay (applies to all kinds of trigger)\n"
-                "                                     [<trigger delay> Number of ADC clock cycles to delay a trigger.\n"
-                "                                     Must be between the following:\n"
-                "                                     <integer number (from 0 up to 2^32-1)]\n"
-                "  --gettrigdly                     Get trigger delay (applies to all kinds of trigger)\n"
-                "  --genswtrig                      Generate software trigger\n"
-                "  --setsamplespre    <number of pre-trigger samples>\n"
-                "                                     [<number of pre-trigger samples> must be between 4 and\n"
-                "                                     ??? (TBD)]\n"
-                "  --setsamplespost   <number of post-trigger samples>\n"
-                "                                     [<number of post-trigger samples> must be between 4 and\n"
-                "                                     ??? (TBD)]\n"
-                "  --setnumshots      <number of shots>\n"
-                "                                     [<number of shots> must be between greater than 1]\n"
-                "  -H  --setchan      <channel>     Sets FPGA Acquisition channel\n"
-                "                                     [<channel> must be one of the following:\n"
-                "                                     0 -> ADC; 1 -> ADC_SWAP; 2 -> Mixer IQ120; 3 -> Mixer IQ340;\n"
-                "                                     4 -> TBT Decim IQ120; 5 -> TBT Decim IQ340; 6 -> TBT Amp;\n"
-                "                                     7 -> TBT Phase; 8 -> TBT Pos; 9 -> FOFB Decim IQ120;\n"
-                "                                     10 -> FOFB Decim IQ340; 11 -> FOFB Amp; 12 -> FOFB Pha;\n"
-                "                                     13 -> FOFB Pos; 14 -> Monit Amp; 15 -> Monit Pha; 16 -> Monit Pos]\n"
-                "  -I  --acqstart                   Starts FPGA acquisition with the previous parameters\n"
-                "  --acqstop                        Stops ongoing FPGA acquisition\n"
-                "                                     <integer number (from 0 up to 2^32-1)]\n"
-                "  -K  --acqcheck                   Check if the previous acquisition is over\n"
-                "  --acqcheckpoll                   Keep checking if the acquisition is over for an amount of time\n"
-                "                                    (Requires -t <timeout>) \n"
-                "  -A  --getblock <block number>    Get specified data block from server \n"
-                "  --getcurve                       Get a whole data curve \n"
-                "  --fullacq                        Perform a full acquisition\n"
-                "  --timeout    <timeout [s]>       Sets the timeout for the polling function\n"
-                );
-        exit (exit_code);
-    }
-
-    /* Long-only options */
-    enum {
-        pllstatus = 1000,
-        getclksel,
-        setclksel,
-        getadcrand,
-        setadcrand,
-        getadcdith,
-        setadcdith,
-        getadcshdn,
-        setadcshdn,
-        getadcpga,
-        setadcpga,
-        getdlyval,
-        setdlyval,
-        getdlyline,
-        setdlyline,
-        getdlyupdt,
-        setdlyupdt,
-        gettrigdir,
-        settrigdir,
-        gettrigterm,
-        settrigterm,
-        gettrigval,
-        settrigval,
-        getad9510plladiv,
-        getad9510pllbdiv,
-        getad9510pllpresc,
-        getad9510pllrdiv,
-        getad9510pllpdown,
-        getad9510mux,
-        getad9510cpcurr,
-        getad9510outputs,
-        getad9510pllclksel,
-        setkx,
-        getkx,
-        setky,
-        getky,
-        setksum,
-        getksum,
-        settbtth,
-        gettbtth,
-        setfofbth,
-        getfofbth,
-        setmonitth,
-        getmonitth,
-        setwdwen,
-        getwdwen,
-        setwdwdly,
-        getwdwdly,
-        setgainaa,
-        getgainaa,
-        setgainac,
-        getgainac,
-        setgaincc,
-        getgaincc,
-        setgainca,
-        getgainca,
-        setgainbb,
-        getgainbb,
-        setgaindd,
-        getgaindd,
-        setgainbd,
-        getgainbd,
-        setgaindb,
-        getgaindb,
-        rffesetsw,
-        rffegetsw,
-        rffesetatt,
-        rffegetatt,
-        rffesettemp,
-        rffegettemp,
-        rffesetpnt,
-        rffegetpnt,
-        rffesettempctr,
-        rffegettempctr,
-        rffesetout,
-        rffegetout,
-        rffereset,
-        rfferpg,
-        rffesetswlvl,
-        rffegetswlvl,
-        setacqtrig,
-        getacqtrig,
-        setdatatrigchan,
-        getdatatrigchan,
-        setdatatrigpol,
-        getdatatrigpol,
-        setdatatrigsel,
-        getdatatrigsel,
-        setdatatrigfilt,
-        getdatatrigfilt,
-        setdatatrigthres,
-        getdatatrigthres,
-        settrigdly,
-        gettrigdly,
-        genswtrig,
-        acqstop,
-        acqcheckpoll,
-        setsamplespre,
-        setsamplespost,
-        setnumshots,
-        getcurve,
-        fullacq,
-        timeout
-    };
-
-    /* TODO: Check which 'set' functions are boolean and set them without the need of an entry value */
-    static struct option long_options[] =
-    {
-        {"help",                no_argument,         NULL, 'h'},
-        {"verbose",             no_argument,         NULL, 'v'},
-        {"endpoint",            required_argument,   NULL, 'e'},
-        {"board",               required_argument,   NULL, 'd'},
-        {"bpm",                 required_argument,   NULL, 'm'},
-        {"leds",                required_argument,   NULL, 'l'},
-        {"pllstatus",           no_argument,         NULL, pllstatus},
-        {"getpll",              no_argument,         NULL, 'p'},
-        {"setpll",              required_argument,   NULL, 'P'},
-        {"ad9510default",       no_argument,         NULL, 'L'},
-        {"getclksel",           no_argument,         NULL, getclksel},
-        {"setclksel",           required_argument,   NULL, setclksel},
-        {"getadcrand",          no_argument,         NULL, getadcrand},
-        {"setadcrand",          required_argument,   NULL, setadcrand},
-        {"getadcdith",          no_argument,         NULL, getadcdith},
-        {"setadcdith",          required_argument,   NULL, setadcdith},
-        {"getadcshdn",          no_argument,         NULL, getadcshdn},
-        {"setadcshdn",          required_argument,   NULL, setadcshdn},
-        {"getadcpga",           no_argument,         NULL, getadcpga},
-        {"setadcpga",           required_argument,   NULL, setadcpga},
-        {"getadcdata",          required_argument,   NULL, 'c'},
-        {"getdlyval",           required_argument,   NULL, getdlyval},
-        {"setdlyval",           required_argument,   NULL, setdlyval},
-        {"getdlyline",          required_argument,   NULL, getdlyline},
-        {"setdlyline",          required_argument,   NULL, setdlyline},
-        {"getdlyupdt",          required_argument,   NULL, getdlyupdt},
-        {"setdlyupdt",          required_argument,   NULL, setdlyupdt},
-        {"setadcdly",           required_argument,   NULL, 'V'},
-        {"gettestdata",         no_argument,         NULL, 'n'},
-        {"settestdata",         required_argument,   NULL, 'N'},
-        {"getsi571oe",          no_argument,         NULL, 'o'},
-        {"setsi571oe",          required_argument,   NULL, 'O'},
-        {"setsi571freq",        required_argument,   NULL, 'i'},
-        {"si571default",        required_argument,   NULL, 'D'},
-        {"gettrigdir",          no_argument,         NULL, gettrigdir},
-        {"settrigdir",          required_argument,   NULL, settrigdir},
-        {"gettrigterm",         no_argument,         NULL, gettrigterm},
-        {"settrigterm",         required_argument,   NULL, settrigterm},
-        {"gettrigval",          no_argument,         NULL, gettrigval},
-        {"settrigval",          required_argument,   NULL, settrigval},
-        {"getad9510plladiv",    no_argument,         NULL, getad9510plladiv},
-        {"setad9510plladiv",    required_argument,   NULL, 'a'},
-        {"getad9510pllbdiv",    no_argument,         NULL, getad9510pllbdiv},
-        {"setad9510pllbdiv",    required_argument,   NULL, 'b'},
-        {"getad9510pllpresc",   no_argument,         NULL, getad9510pllpresc},
-        {"setad9510pllpresc",   required_argument,   NULL, 'r'},
-        {"getad9510rdiv",       no_argument,         NULL, getad9510pllrdiv},
-        {"setad9510rdiv",       required_argument,   NULL, 'R'},
-        {"getad9510pllpdown",   no_argument,         NULL, getad9510pllpdown},
-        {"setad9510pllpdown",   required_argument,   NULL, 'B'},
-        {"getad9510mux",        no_argument,         NULL, getad9510mux},
-        {"setad9510mux",        required_argument,   NULL, 'M'},
-        {"getad9510cpcurr",     no_argument,         NULL, getad9510cpcurr},
-        {"setad9510cpcurr",     required_argument,   NULL, 'u'},
-        {"getad9510outputs",    no_argument,         NULL, getad9510outputs},
-        {"setad9510outputs",    required_argument,   NULL, 'U'},
-        {"getad9510pllclksel",  no_argument,         NULL, getad9510pllclksel},
-        {"setad9510pllclksel",  required_argument,   NULL, 'k'},
-        {"setkx",               required_argument,   NULL, setkx},
-        {"getkx",               no_argument,         NULL, getkx},
-        {"setky",               required_argument,   NULL, setky},
-        {"getky",               no_argument,         NULL, getky},
-        {"setksum",             required_argument,   NULL, setksum},
-        {"getksum",             no_argument,         NULL, getksum},
-        {"settbtth",            required_argument,   NULL, settbtth},
-        {"gettbtth",            no_argument,         NULL, gettbtth},
-        {"setfofbth",           required_argument,   NULL, setfofbth},
-        {"getfofbth",           no_argument,         NULL, getfofbth},
-        {"setmonitth",          required_argument,   NULL, setmonitth},
-        {"getmonitth",          no_argument,         NULL, getmonitth},
-        {"getmonitamp",         required_argument,   NULL, 'j'},
-        {"getmonitposx",        required_argument,   NULL, 'x'},
-        {"getmonitposy",        required_argument,   NULL, 'y'},
-        {"getmonitposq",        required_argument,   NULL, 'q'},
-        {"getmonitpossum",      required_argument,   NULL, 's'},
-        {"setsw",               required_argument,   NULL, 'W'},
-        {"getsw",               no_argument,         NULL, 'w'},
-        {"setswen",             required_argument,   NULL, 'T'},
-        {"getswen",             no_argument,         NULL, 't'},
-        {"setdivclk",           required_argument,   NULL, 'Z'},
-        {"getdivclk",           no_argument,         NULL, 'z'},
-        {"setswdly",            required_argument,   NULL, 'F'},
-        {"getswdly",            no_argument,         NULL, 'f'},
-        {"setwdwen",            required_argument,   NULL, setwdwen},
-        {"getwdwen",            no_argument,         NULL, getwdwen},
-        {"setwdwdly",           required_argument,   NULL, setwdwdly},
-        {"getwdwdly",           no_argument,         NULL, getwdwdly},
-        {"setgainaa",           required_argument,   NULL, setgainaa},
-        {"getgainaa",           no_argument,         NULL, getgainaa},
-        {"setgainac",           required_argument,   NULL, setgainac},
-        {"getgainac",           no_argument,         NULL, getgainac},
-        {"setgainbb",           required_argument,   NULL, setgainbb},
-        {"getgainbb",           no_argument,         NULL, getgainbb},
-        {"setgainbd",           required_argument,   NULL, setgainbd},
-        {"getgainbd",           no_argument,         NULL, getgainbd},
-        {"setgaincc",           required_argument,   NULL, setgaincc},
-        {"getgaincc",           no_argument,         NULL, getgaincc},
-        {"setgainca",           required_argument,   NULL, setgainca},
-        {"getgainca",           no_argument,         NULL, getgainca},
-        {"setgaindd",           required_argument,   NULL, setgaindd},
-        {"getgaindd",           no_argument,         NULL, getgaindd},
-        {"setgaindb",           required_argument,   NULL, setgaindb},
-        {"getgaindb",           no_argument,         NULL, getgaindb},
-        {"rffesetsw",           required_argument,   NULL, rffesetsw},
-        {"rffegetsw",           no_argument,         NULL, rffegetsw},
-        {"rffesetatt",          required_argument,   NULL, rffesetatt},
-        {"rffegetatt",          required_argument,   NULL, rffegetatt},
-        {"rffesettemp",         required_argument,   NULL, rffesettemp},
-        {"rffegettemp",         required_argument,   NULL, rffegettemp},
-        {"rffesetpnt",          required_argument,   NULL, rffesetpnt},
-        {"rffegetpnt",          required_argument,   NULL, rffegetpnt},
-        {"rffesettempctr",      required_argument,   NULL, rffesettempctr},
-        {"rffegettempctr",      no_argument,         NULL, rffegettempctr},
-        {"rffesetout",          required_argument,   NULL, rffesetout},
-        {"rffegetout",          required_argument,   NULL, rffegetout},
-        {"rffereset",           required_argument,   NULL, rffereset},
-        {"rfferpg",             required_argument,   NULL, rfferpg},
-        {"rffesetswlvl",        required_argument,   NULL, rffesetswlvl},
-        {"rffegetswlvl",        no_argument,         NULL, rffegetswlvl},
-        {"setacqtrig",          required_argument,   NULL, setacqtrig},
-        {"getacqtrig",          required_argument,   NULL, getacqtrig},
-        {"setdatatrigchan",     required_argument,   NULL, setdatatrigchan},
-        {"getdatatrigchan",     required_argument,   NULL, getdatatrigchan},
-        {"setdatatrigpol",      required_argument,   NULL, setdatatrigpol},
-        {"getdatatrigpol",      required_argument,   NULL, getdatatrigpol},
-        {"setdatatrigsel",      required_argument,   NULL, setdatatrigsel},
-        {"getdatatrigsel",      required_argument,   NULL, getdatatrigsel},
-        {"setdatatrigfilt",     required_argument,   NULL, setdatatrigfilt},
-        {"getdatatrigfilt",     required_argument,   NULL, getdatatrigfilt},
-        {"setdatatrigthres",    required_argument,   NULL, setdatatrigthres},
-        {"getdatatrigthres",    required_argument,   NULL, getdatatrigthres},
-        {"settrigdly",          required_argument,   NULL, settrigdly},
-        {"gettrigdly",          required_argument,   NULL, gettrigdly},
-        {"genswtrig",           no_argument,         NULL, genswtrig},
-        {"acqstop",             no_argument,         NULL, acqstop},
-        {"setsamplespre",       required_argument,   NULL, setsamplespre},
-        {"setsamplespost",      required_argument,   NULL, setsamplespost},
-        {"setnumshots",         required_argument,   NULL, setnumshots},
-        {"setchan",             required_argument,   NULL, 'H'},
-        {"acqstart",            no_argument,         NULL, 'I'},
-        {"acqcheck",            no_argument,         NULL, 'K'},
-        {"acqcheckpoll",        no_argument,         NULL, acqcheckpoll},
-        {"getblock",            required_argument,   NULL, 'A'},
-        {"getcurve",            no_argument,         NULL, getcurve},
-        {"fullacq",             no_argument,         NULL, fullacq},
-        {"timeout",             required_argument,   NULL, timeout},
-        {NULL, 0, NULL, 0}
-    };
 
     const char* shortopt = "hve:d:m:l:pP:Lc:u:U:V:nN:oO:i:D:a:b:r:R:B:M:u:U:k:j:xyqswW:tT:zZ:fF:H:IKA:";
 
