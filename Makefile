@@ -13,12 +13,20 @@ MAKE ?=		make
 
 # Selects the install prefix directory
 PREFIX ?= /usr/local
-
-# General C flags
-CFLAGS = -std=gnu99 -O2
-
 LOCAL_MSG_DBG ?= n
 DBE_DBG ?= n
+
+# General C/CPP flags
+CFLAGS_USR = -std=gnu99 -O2
+# We expect these variables to be appended to the possible
+# command-line options
+override CPPFLAGS +=
+override CXXFLAGS +=
+
+# Malamute 1.0.0 requires this to be defined
+# as all of its API is in DRAFT state
+CFLAGS_USR += -DMLM_BUILD_DRAFT_API
+
 CFLAGS_DEBUG =
 
 # Debug flags -D<flasg_name>=<value>
@@ -47,11 +55,10 @@ LFLAGS = -L${PREFIX}/lib
 # Include directories
 INCLUDE_DIRS = -I. -I${PREFIX}/include
 
-# Merge all flags. Optimize for size (-Os)
-CFLAGS += $(CFLAGS_PLATFORM) $(CFLAGS_DEBUG)
-#-Os
-
-LDFLAGS = $(LDFLAGS_PLATFORM)
+# Merge all flags. We expect tghese variables to be appended to the possible
+# command-line options
+override CFLAGS += $(CFLAGS_USR) $(CFLAGS_PLATFORM) $(CFLAGS_DEBUG) $(CPPFLAGS) $(CXXFLAGS)
+override LDFLAGS += $(LDFLAGS_PLATFORM)
 
 # Every .c file will must be a separate example
 examples_SRC = $(wildcard *.c)
