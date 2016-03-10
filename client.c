@@ -32,34 +32,51 @@
         }\
     }while(0)
 
-void print_data_curve (uint32_t chan, uint32_t *data, uint32_t size)
+typedef enum {
+    TEXT = 0,
+    BINARY,
+    END_FILE_FMT
+} filefmt_e;
+
+void print_data_curve (uint32_t chan, uint32_t *data, uint32_t size, filefmt_e filefmt)
 {
     /* FIXME: Make it more generic */
-    if ((chan == 0)| (chan == 1)) {
+    if (chan == 0 || chan == 1 /* Only ADC and ADC SWAP */ ) {
         int16_t *raw_data16 = (int16_t *) data;
-        for (uint32_t i = 0; i < (size/sizeof(uint16_t)) / 4; i++) {
-            if (zctx_interrupted) {
-                break;
-            }
+        if (filefmt == TEXT) {
+            for (uint32_t i = 0; i < (size/sizeof(uint16_t)) / 4; i++) {
+                if (zctx_interrupted) {
+                    break;
+                }
 
-            printf ("%8d\t %8d\t %8d\t %8d\n",
-                    raw_data16[(i*4)],
-                    raw_data16[(i*4)+1],
-                    raw_data16[(i*4)+2],
-                    raw_data16[(i*4)+3]);
+                printf ("%8d\t %8d\t %8d\t %8d\n",
+                        raw_data16[(i*4)],
+                        raw_data16[(i*4)+1],
+                        raw_data16[(i*4)+2],
+                        raw_data16[(i*4)+3]);
+            }
         }
-    } else {
+        else if (filefmt == BINARY) {
+            fwrite (raw_data16, 2, size/2, stdout);
+        }
+    }
+    else {
         int32_t *raw_data32 = (int32_t *) data;
-        for (uint32_t i = 0; i < (size/sizeof(uint32_t)) / 4; i++) {
-            if (zctx_interrupted) {
-                break;
-            }
+        if (filefmt == TEXT) {
+            for (uint32_t i = 0; i < (size/sizeof(uint32_t)) / 4; i++) {
+                if (zctx_interrupted) {
+                    break;
+                }
 
-            printf ("%8d\t %8d\t %8d\t %8d\n",
-                    raw_data32[(i*4)],
-                    raw_data32[(i*4)+1],
-                    raw_data32[(i*4)+2],
-                    raw_data32[(i*4)+3]);
+                printf ("%8d\t %8d\t %8d\t %8d\n",
+                        raw_data32[(i*4)],
+                        raw_data32[(i*4)+1],
+                        raw_data32[(i*4)+2],
+                        raw_data32[(i*4)+3]);
+            }
+        }
+        else if (filefmt == BINARY) {
+            fwrite (raw_data32, 4, size/4, stdout);
         }
     }
 }
@@ -391,6 +408,11 @@ void print_usage (const char *program_name, FILE* stream, int exit_code)
             "  -A  --getblock <block number>    Get specified data block from server \n"
             "  --getcurve                       Get a whole data curve \n"
             "  --fullacq                        Perform a full acquisition\n"
+            "  --filefmt <Acquisition file format>\n"
+            "                                   Sets the acquisition file format\n"
+            "                                     [<Acquisition file format>\n"
+            "                                     Must be between one of the following:\n"
+            "                                     <0 = text mode | 1 = binary mode>]\n"
             "  --timeout    <timeout [s]>       Sets the timeout for the polling function\n"
             );
     exit (exit_code);
@@ -500,7 +522,8 @@ enum {
     setnumshots,
     getcurve,
     fullacq,
-    timeout
+    timeout,
+    filefmt
 };
 
 /* TODO: Check which 'set' functions are boolean and set them without the need of an entry value */
@@ -652,6 +675,7 @@ static struct option long_options[] =
     {"getcurve",            no_argument,         NULL, getcurve},
     {"fullacq",             no_argument,         NULL, fullacq},
     {"timeout",             required_argument,   NULL, timeout},
+    {"filefmt",             required_argument,   NULL, filefmt},
     {NULL, 0, NULL, 0}
 };
 
@@ -668,6 +692,8 @@ int main (int argc, char *argv [])
     uint32_t board_number;
     char *board_number_str = NULL;
     char *bpm_number_str = NULL;
+    char *filefmt_str = NULL;
+    int filefmt_val = 0;
 
     /* Acquitision parameters check variables */
     int acq_samples_pre_set = 0;
@@ -2099,6 +2125,11 @@ int main (int argc, char *argv [])
                 poll_timeout = (int) strtoul(optarg, NULL, 10);
                 break;
 
+                /*  Set acquisition output format */
+            case filefmt:
+                filefmt_str = strdup (optarg);
+                break;
+
             default:
                 fprintf(stderr, "%s: bad option\n", program_name);
                 print_usage(program_name, stderr, 1);
@@ -2175,6 +2206,21 @@ int main (int argc, char *argv [])
         acq_check = 0;
         acq_get_block = 0;
         acq_get_curve = 0;
+    }
+    /* If we are receiving acqusition data, file format must be set */
+    if (acq_full_call || acq_get_block || acq_get_curve) {
+        if (filefmt_str == NULL) {
+            fprintf(stderr, "%s: If --fullacq, --getcurve or -getcurve is requested, --filefmt  must be set too\n", program_name);
+            exit (EXIT_FAILURE);
+        }
+        else {
+            filefmt_val = strtoul (filefmt_str, NULL, 10);
+
+            if (filefmt_val > END_FILE_FMT-1) {
+                fprintf (stderr, "[client:acq]: Invalid file format (--filefmt).\n");
+                exit (EXIT_FAILURE);
+            }
+        }
     }
 
     /* If we are here, all the parameters are good and the functions can be executed */
@@ -2261,7 +2307,8 @@ int main (int argc, char *argv [])
 
         if (err == BPM_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: bpm_get_block was successfully executed\n");
-            print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
+            print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
+                    filefmt_val);
         } else {
             fprintf (stderr, "[client:acq]: bpm_get_block failed\n");
         }
@@ -2287,7 +2334,8 @@ int main (int argc, char *argv [])
         bpm_client_err_e err = bpm_acq_get_curve(bpm_client, acq_service, &acq_trans);
 
         if (err == BPM_CLIENT_SUCCESS) {
-            print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
+            print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
+                    filefmt_val);
             fprintf (stderr, "[client:acq]: bpm_acq_get_curve was successfully executed\n");
         } else {
             fprintf (stderr, "[client:acq]: bpm_acq_get_curve failed: %s\n", bpm_client_err_str(err));
@@ -2319,7 +2367,8 @@ int main (int argc, char *argv [])
             fprintf (stderr, "[client:acq]: %s\n", bpm_client_err_str(err));
             exit(EXIT_FAILURE);
         }
-        print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read);
+        print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
+                filefmt_val);
         acq_full_call = 0;
         free(valid_data);
     }
@@ -2367,6 +2416,7 @@ int main (int argc, char *argv [])
     }
 
     /* Deallocate memory */
+    free (filefmt_str);
     free (default_broker_endp);
     free (broker_endp);
     free (board_number_str);
