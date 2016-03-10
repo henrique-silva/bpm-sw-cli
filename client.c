@@ -205,7 +205,7 @@ bpm_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, ch
                     break;
             default:
                     /* Unknown suboption. */
-                    printf ("Unknown suboption '%s'\n", value);
+                    fprintf (stderr, "Unknown suboption '%s'\n", value);
                     err = BPM_CLIENT_ERR_INV_FUNCTION;
                     goto inv_function;
         }
@@ -2170,7 +2170,7 @@ int main (int argc, char *argv [])
     }
 
     if (acq_full_call && (acq_start || acq_check || acq_get_block || acq_get_curve)) {
-        printf("%s: If --fullacq is requested, the other acquisition functions dont need to be called. Executing -fullacq only...\n", program_name);
+        fprintf(stderr, "%s: If --fullacq is requested, the other acquisition functions dont need to be called. Executing -fullacq only...\n", program_name);
         acq_start = 0;
         acq_check = 0;
         acq_get_block = 0;
