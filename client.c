@@ -713,7 +713,7 @@ int main (int argc, char *argv [])
     int acq_get_curve = 0;
     uint32_t acq_block_id = 0;
     int check_poll = 0;
-    uint32_t poll_timeout = 0;
+    int poll_timeout = -1;
 
 
     const char* shortopt = "hve:d:m:l:pP:Lc:u:U:V:nN:oO:i:D:a:b:r:R:B:M:u:U:k:j:xyqswW:tT:zZ:fF:H:IKA:";
@@ -2122,7 +2122,7 @@ int main (int argc, char *argv [])
 
                 /*  Set Polling timeout */
             case timeout:
-                poll_timeout = (int) strtoul(optarg, NULL, 10);
+                poll_timeout = (int) strtol(optarg, NULL, 10);
                 break;
 
                 /*  Set acquisition output format */
