@@ -2201,7 +2201,7 @@ int main (int argc, char *argv [])
     }
 
     if (acq_full_call && (acq_start || acq_check || acq_get_block || acq_get_curve)) {
-        fprintf(stderr, "%s: If --fullacq is requested, the other acquisition functions dont need to be called. Executing -fullacq only...\n", program_name);
+        fprintf(stderr, "%s: If --fullacq is requested, the other acquisition functions don't need to be called. Executing --fullacq only...\n", program_name);
         acq_start = 0;
         acq_check = 0;
         acq_get_block = 0;
