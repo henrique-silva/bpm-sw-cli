@@ -2207,19 +2207,14 @@ int main (int argc, char *argv [])
         acq_get_block = 0;
         acq_get_curve = 0;
     }
-    /* If we are receiving acqusition data, file format must be set */
-    if (acq_full_call || acq_get_block || acq_get_curve) {
-        if (filefmt_str == NULL) {
-            fprintf(stderr, "%s: If --fullacq, --getcurve or -getcurve is requested, --filefmt  must be set too\n", program_name);
-            exit (EXIT_FAILURE);
-        }
-        else {
-            filefmt_val = strtoul (filefmt_str, NULL, 10);
 
-            if (filefmt_val > END_FILE_FMT-1) {
-                fprintf (stderr, "[client:acq]: Invalid file format (--filefmt).\n");
-                exit (EXIT_FAILURE);
-            }
+    /* Check filefmt option. filefmt has the default value of 0 (text mode) */
+    if ((acq_full_call || acq_get_block || acq_get_curve) && filefmt_str != NULL) {
+        filefmt_val = strtoul (filefmt_str, NULL, 10);
+
+        if (filefmt_val > END_FILE_FMT-1) {
+            fprintf (stderr, "[client:acq]: Invalid file format (--filefmt).\n");
+            exit (EXIT_FAILURE);
         }
     }
 
