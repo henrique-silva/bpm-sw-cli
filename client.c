@@ -404,7 +404,7 @@ void print_usage (const char *program_name, FILE* stream, int exit_code)
             "                                     <integer number (from 0 up to 2^32-1)]\n"
             "  -K  --acqcheck                   Check if the previous acquisition is over\n"
             "  --acqcheckpoll                   Keep checking if the acquisition is over for an amount of time\n"
-            "                                    (Requires -t <timeout>) \n"
+            "                                    (Requires --timeout <timeout>) \n"
             "  -A  --getblock <block number>    Get specified data block from server \n"
             "  --getcurve                       Get a whole data curve \n"
             "  --fullacq                        Perform a full acquisition\n"
@@ -413,7 +413,7 @@ void print_usage (const char *program_name, FILE* stream, int exit_code)
             "                                     [<Acquisition file format>\n"
             "                                     Must be between one of the following:\n"
             "                                     <0 = text mode | 1 = binary mode>]\n"
-            "  --timeout    <timeout [s]>       Sets the timeout for the polling function\n"
+            "  --timeout    <timeout [ms]>      Sets the timeout for the polling function\n"
             );
     exit (exit_code);
 }
