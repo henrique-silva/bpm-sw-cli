@@ -2195,11 +2195,6 @@ int main (int argc, char *argv [])
         exit(EXIT_FAILURE);
     }
 
-    if (acq_full_call && (poll_timeout == 0)) {
-        fprintf(stderr, "%s: If --fullacq is requested, --timeout must be set!\n", program_name);
-        exit(EXIT_FAILURE);
-    }
-
     if (acq_full_call && (acq_start || acq_check || acq_get_block || acq_get_curve)) {
         fprintf(stderr, "%s: If --fullacq is requested, the other acquisition functions don't need to be called. Executing --fullacq only...\n", program_name);
         acq_start = 0;
