@@ -696,14 +696,10 @@ int main (int argc, char *argv [])
     int filefmt_val = 0;
 
     /* Acquitision parameters check variables */
-    int acq_samples_pre_set = 0;
-    int acq_samples_post_set = 0;
-    int acq_num_shots_set = 0;
-    int acq_samples_set = 0;
     int acq_chan_set = 0;
-    uint32_t acq_samples_pre_val = 0;
+    uint32_t acq_samples_pre_val = 10;
     uint32_t acq_samples_post_val = 0;
-    uint32_t acq_num_shots_val = 0;
+    uint32_t acq_num_shots_val = 1;
     uint32_t acq_total_samples_val = 0;
     uint32_t acq_chan_val = 0;
     int acq_full_call = 0;
@@ -2067,17 +2063,14 @@ int main (int argc, char *argv [])
 
                 /*  Set Acq Pre-trigger Samples */
             case setsamplespre:
-                acq_samples_pre_set = 1;
                 acq_samples_pre_val =  strtoul(optarg, NULL, 10);
                 break;
 
             case setsamplespost:
-                acq_samples_post_set = 1;
                 acq_samples_post_val =  strtoul(optarg, NULL, 10);
                 break;
 
             case setnumshots:
-                acq_num_shots_set = 1;
                 acq_num_shots_val =  strtoul(optarg, NULL, 10);
                 break;
 
@@ -2159,30 +2152,6 @@ int main (int argc, char *argv [])
         bpm_number = DFLT_BPM_NUMBER;
     } else {
         bpm_number = strtoul (bpm_number_str, NULL, 10);
-    }
-
-    acq_samples_set = acq_samples_pre_set && acq_samples_post_set && acq_num_shots_set;
-
-    /* Both Acq Chan and Acq Samples must be set or none of them */
-    if ((acq_samples_set && !acq_chan_set) || (!acq_samples_set && acq_chan_set)) {
-        fprintf(stderr, "%s: If --setsamples<pre|post>, --setnumshots or --setchan is set the others must be too!\n", program_name);
-        exit(EXIT_FAILURE);
-    }
-
-    if ( (acq_start || acq_get_block || acq_get_curve || acq_full_call) && (!acq_samples_set || !acq_chan_set)) {
-        if (acq_start) {
-            fprintf(stderr, "%s: If --acqstart is requested, setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
-            }
-        if (acq_get_block) {
-            fprintf(stderr, "%s: To receive a data block, setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
-            }
-        if (acq_get_curve) {
-            fprintf(stderr, "%s: To receive a data curve, --setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
-            }
-        if (acq_full_call) {
-            fprintf(stderr, "%s: If --fullacq is requested, --setsamples<pre|post>, --setnumshots and --setchan must be set!\n", program_name);
-            }
-        exit(EXIT_FAILURE);
     }
 
     if (acq_chan_set && (acq_chan_val >= END_CHAN_ID)) {
