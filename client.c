@@ -13,6 +13,9 @@
 #define DFLT_BOARD_NUMBER           0
 
 #define FMC130M_4CH_MODULE_NAME     "FMC130M_4CH"
+#define FMC250M_4CH_MODULE_NAME     "FMC250M_4CH"
+#define FMC_ADC_COMMON_MODULE_NAME  "FMC_ADC_COMMON"
+#define FMC_ACTIVE_CLK_MODULE_NAME  "FMC_ACTIVE_CLK"
 #define DSP_MODULE_NAME             "DSP"
 #define SWAP_MODULE_NAME            "SWAP"
 #define ACQ_MODULE_NAME             "ACQ"
@@ -756,16 +759,16 @@ int main (int argc, char *argv [])
 
                 /* Blink FMC Leds */
             case 'l':
-                item.name = FMC130M_4CH_NAME_LEDS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_LEDS;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 *item.write_val = strtoul(optarg, NULL, 10);
                 append_item (call_list, item);
                 break;
 
                 /* Get PLL Function */
             case 'p':
-                item.name = FMC130M_4CH_NAME_PLL_FUNCTION;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_PLL_FUNCTION;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -773,8 +776,8 @@ int main (int argc, char *argv [])
 
                 /* Set PLL Function */
             case 'P':
-                item.name = FMC130M_4CH_NAME_PLL_FUNCTION;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_PLL_FUNCTION;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -783,8 +786,8 @@ int main (int argc, char *argv [])
 
                 /* Get PLL Lock Status */
             case pllstatus:
-                item.name = FMC130M_4CH_NAME_PLL_STATUS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_PLL_STATUS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -792,16 +795,16 @@ int main (int argc, char *argv [])
 
                 /* AD9510 Defaults */
             case 'L':
-                item.name = FMC130M_4CH_NAME_AD9510_CFG_DEFAULTS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_CFG_DEFAULTS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 append_item (call_list, item);
                 break;
 
                 /* Get Clock Selection */
             case getclksel:
-                item.name = FMC130M_4CH_NAME_CLK_SEL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_CLK_SEL;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -809,8 +812,8 @@ int main (int argc, char *argv [])
 
                 /* Set Clock Selection */
             case setclksel:
-                item.name = FMC130M_4CH_NAME_CLK_SEL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_CLK_SEL;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1021,8 +1024,8 @@ int main (int argc, char *argv [])
 
                 /* Set Test data on ADC */
             case 'N':
-                item.name = FMC130M_4CH_NAME_TEST_DATA_EN;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TEST_DATA_EN;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1031,8 +1034,8 @@ int main (int argc, char *argv [])
 
                 /* Get Test data on ADC */
             case 'n':
-                item.name = FMC130M_4CH_NAME_TEST_DATA_EN;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TEST_DATA_EN;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1040,8 +1043,8 @@ int main (int argc, char *argv [])
 
                 /* Set SI571 OE */
             case 'O':
-                item.name = FMC130M_4CH_NAME_SI571_OE;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_SI571_OE;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1050,8 +1053,8 @@ int main (int argc, char *argv [])
 
                 /* Get SI571 OE */
             case 'o':
-                item.name = FMC130M_4CH_NAME_SI571_OE;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_SI571_OE;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1059,8 +1062,8 @@ int main (int argc, char *argv [])
 
                 /* Set SI571 Frequency */
             case 'i':
-                item.name = FMC130M_4CH_NAME_SI571_SET_FREQ;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_SI571_FREQ;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 db_val = strtod(optarg, NULL);
@@ -1070,8 +1073,8 @@ int main (int argc, char *argv [])
 
                 /* Get SI571 Defaults */
             case 'D':
-                item.name = FMC130M_4CH_NAME_SI571_GET_DEFAULTS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_SI571_GET_DEFAULTS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 db_val = strtod(optarg, NULL);
@@ -1081,8 +1084,8 @@ int main (int argc, char *argv [])
 
                 /* Set Trigger Dir */
             case settrigdir:
-                item.name = FMC130M_4CH_NAME_TRIG_DIR;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_DIR;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1091,8 +1094,8 @@ int main (int argc, char *argv [])
 
                 /* Get Trigger Dir */
             case gettrigdir:
-                item.name = FMC130M_4CH_NAME_TRIG_DIR;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_DIR;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1100,8 +1103,8 @@ int main (int argc, char *argv [])
 
                 /* Set Trigger Term */
             case settrigterm:
-                item.name = FMC130M_4CH_NAME_TRIG_TERM;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_TERM;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1110,8 +1113,8 @@ int main (int argc, char *argv [])
 
                 /* Get Trigger Term */
             case gettrigterm:
-                item.name = FMC130M_4CH_NAME_TRIG_TERM;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_TERM;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1119,8 +1122,8 @@ int main (int argc, char *argv [])
 
                 /* Set Trigger Value */
             case settrigval:
-                item.name = FMC130M_4CH_NAME_TRIG_VAL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_VAL;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1129,8 +1132,8 @@ int main (int argc, char *argv [])
 
                 /* Get Trigger Value */
             case gettrigval:
-                item.name = FMC130M_4CH_NAME_TRIG_VAL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ADC_COMMON_NAME_TRIG_VAL;
+                item.service = FMC_ADC_COMMON_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1138,8 +1141,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 PLL A Divider */
             case 'a':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_A_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_A_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1148,8 +1151,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 PLL A Divider */
             case getad9510plladiv:
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_A_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_A_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1157,8 +1160,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 PLL B Divider */
             case 'b':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_B_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_B_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1167,8 +1170,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 PLL B Divider */
             case getad9510pllbdiv:
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_B_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_B_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1176,8 +1179,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 PLL Prescaler */
             case 'r':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_PRESCALER;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_PRESCALER;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1186,8 +1189,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 PLL Prescaler */
             case getad9510pllpresc:
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_PRESCALER;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_PRESCALER;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1195,8 +1198,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 R Divider */
             case 'R':
-                item.name = FMC130M_4CH_NAME_AD9510_R_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_R_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1205,8 +1208,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 R Divider */
             case getad9510pllrdiv:
-                item.name = FMC130M_4CH_NAME_AD9510_R_DIV;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_R_DIV;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1214,8 +1217,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 PLL PDown */
             case 'B':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_PDOWN;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_PDOWN;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1224,8 +1227,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 PLL PDown */
             case getad9510pllpdown:
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_PDOWN;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_PDOWN;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1233,8 +1236,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 MUX Status */
             case 'M':
-                item.name = FMC130M_4CH_NAME_AD9510_MUX_STATUS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_MUX_STATUS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1243,8 +1246,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 MUX Status */
             case getad9510mux:
-                item.name = FMC130M_4CH_NAME_AD9510_MUX_STATUS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_MUX_STATUS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1252,8 +1255,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 CP Current */
             case 'u':
-                item.name = FMC130M_4CH_NAME_AD9510_CP_CURRENT;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_CP_CURRENT;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1262,8 +1265,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 CP Current */
             case getad9510cpcurr:
-                item.name = FMC130M_4CH_NAME_AD9510_CP_CURRENT;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_CP_CURRENT;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1271,8 +1274,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 Outputs */
             case 'U':
-                item.name = FMC130M_4CH_NAME_AD9510_OUTPUTS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_OUTPUTS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1281,8 +1284,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 Outputs */
             case getad9510outputs:
-                item.name = FMC130M_4CH_NAME_AD9510_OUTPUTS;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_OUTPUTS;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
@@ -1290,8 +1293,8 @@ int main (int argc, char *argv [])
 
                 /* Set AD9510 PLL Clock Select */
             case 'k':
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_CLK_SEL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_CLK_SEL;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
@@ -1300,8 +1303,8 @@ int main (int argc, char *argv [])
 
                  /* Get AD9510 PLL Clock Select */
             case getad9510pllclksel:
-                item.name = FMC130M_4CH_NAME_AD9510_PLL_CLK_SEL;
-                item.service = FMC130M_4CH_MODULE_NAME;
+                item.name = FMC_ACTIVE_CLK_NAME_AD9510_PLL_CLK_SEL;
+                item.service = FMC_ACTIVE_CLK_MODULE_NAME;
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
