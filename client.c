@@ -1,7 +1,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <bpm_client.h>
+#include <halcs_client.h>
 
 #define DFLT_BIND_FOLDER "/tmp/bpm"
 
@@ -201,9 +201,9 @@ static fe_gain_t gains[16] =
     {"db", 0, 0, 1, 0}
 };
 
-bpm_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, char *corr_name, uint32_t *input)
+halcs_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, char *corr_name, uint32_t *input)
 {
-    bpm_client_err_e err = BPM_CLIENT_SUCCESS;
+    halcs_client_err_e err = HALCS_CLIENT_SUCCESS;
     strncpy(corr_name, "", strlen(corr_name));
     char* value;
     char* temp_value = "";
@@ -226,13 +226,13 @@ bpm_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, ch
             default:
                     /* Unknown suboption. */
                     fprintf (stderr, "Unknown suboption '%s'\n", value);
-                    err = BPM_CLIENT_ERR_INV_FUNCTION;
+                    err = HALCS_CLIENT_ERR_INV_FUNCTION;
                     goto inv_function;
         }
     }
     const disp_op_t* temp_func = bpm_func_translate(corr_name);
     if (temp_func == NULL) {
-        err = BPM_CLIENT_ERR_INV_FUNCTION;
+        err = HALCS_CLIENT_ERR_INV_FUNCTION;
         goto inv_function;
     }
 
@@ -252,7 +252,7 @@ inv_function:
 void print_usage (const char *program_name, FILE* stream, int exit_code)
 {
     /* FIXME: Add the RFFE module functions' help information */
-    fprintf (stream, "BPM Client program\n");
+    fprintf (stream, "HALCS Client program\n");
     fprintf (stream, "Usage:  %s options \n", program_name);
     fprintf (stream,
             "  -h  --help                       Display this usage information.\n"
@@ -322,8 +322,6 @@ void print_usage (const char *program_name, FILE* stream, int exit_code)
             "                                     [chan must be a, b, c, or d]\n"
             "  --setgain[chan] <value [db]>     Set RF Gain\n"
             "                                     [chan must be a, b, c, or d]\n"
-            "  --rffesetsw <mode (0-3)>         Set RFFE Switching mode\n"
-            "  --rffegetsw                      Get RFFE Switching mode\n"
             "  --rffesetatt <0-31.5 [dB] >    Set RFFE attenuation\n"
             "  --rffegetatt                     Get RFFE attenuation\n"
             "  --rffesettemp  <chan=(1|2), value=[degrees]>\n"
@@ -487,8 +485,6 @@ enum {
     getgainbd,
     setgaindb,
     getgaindb,
-    rffesetsw,
-    rffegetsw,
     rffesetatt,
     rffegetatt,
     rffesettemp,
@@ -501,8 +497,6 @@ enum {
     rffegetout,
     rffereset,
     rfferpg,
-    rffesetswlvl,
-    rffegetswlvl,
     setacqtrig,
     getacqtrig,
     setdatatrigchan,
@@ -635,8 +629,6 @@ static struct option long_options[] =
     {"getgaindd",           no_argument,         NULL, getgaindd},
     {"setgaindb",           required_argument,   NULL, setgaindb},
     {"getgaindb",           no_argument,         NULL, getgaindb},
-    {"rffesetsw",           required_argument,   NULL, rffesetsw},
-    {"rffegetsw",           no_argument,         NULL, rffegetsw},
     {"rffesetatt",          required_argument,   NULL, rffesetatt},
     {"rffegetatt",          required_argument,   NULL, rffegetatt},
     {"rffesettemp",         required_argument,   NULL, rffesettemp},
@@ -649,8 +641,6 @@ static struct option long_options[] =
     {"rffegetout",          required_argument,   NULL, rffegetout},
     {"rffereset",           required_argument,   NULL, rffereset},
     {"rfferpg",             required_argument,   NULL, rfferpg},
-    {"rffesetswlvl",        required_argument,   NULL, rffesetswlvl},
-    {"rffegetswlvl",        no_argument,         NULL, rffegetswlvl},
     {"setacqtrig",          required_argument,   NULL, setacqtrig},
     {"getacqtrig",          required_argument,   NULL, getacqtrig},
     {"setdatatrigchan",     required_argument,   NULL, setdatatrigchan},
@@ -728,7 +718,7 @@ int main (int argc, char *argv [])
     while ((ch = getopt_long_only(argc, argv, shortopt , long_options, NULL)) != -1)
     {
         double db_val = 0;
-        bpm_client_err_e err = BPM_CLIENT_SUCCESS;
+        halcs_client_err_e err = HALCS_CLIENT_SUCCESS;
 
         /* Get the user selected options */
         switch (ch)
@@ -898,8 +888,8 @@ int main (int argc, char *argv [])
 
                 /* Get ADC Data */
             case 'c':
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DATA0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DATA0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -912,8 +902,8 @@ int main (int argc, char *argv [])
 
                 /* Set ADC Data */
             case 'C':
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DATA0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DATA0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -926,8 +916,8 @@ int main (int argc, char *argv [])
 
                 /* Get ADC Dly Value */
             case getdlyval:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_VAL0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_VAL0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -940,8 +930,8 @@ int main (int argc, char *argv [])
 
                 /* Set ADC Dly Value */
             case setdlyval:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_VAL0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_VAL0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -954,8 +944,8 @@ int main (int argc, char *argv [])
 
                 /* Get ADC Dly Line */
             case getdlyline:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_LINE0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_LINE0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -968,8 +958,8 @@ int main (int argc, char *argv [])
 
                 /* Set ADC Dly Line */
             case setdlyline:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_LINE0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_LINE0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -982,8 +972,8 @@ int main (int argc, char *argv [])
 
                 /* Get ADC Dly Update */
             case getdlyupdt:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_UPDT0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_UPDT0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -996,8 +986,8 @@ int main (int argc, char *argv [])
 
                 /* Set ADC Dly Update */
             case setdlyupdt:
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_UPDT0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY_UPDT0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1010,8 +1000,8 @@ int main (int argc, char *argv [])
 
                 /* Set ADC Dly */
             case 'V':
-                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, FMC130M_4CH_NAME_ADC_DLY0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1504,8 +1494,8 @@ int main (int argc, char *argv [])
 
                 /* Set Monit AMP */
             case 'J':
-                if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1518,8 +1508,8 @@ int main (int argc, char *argv [])
 
                 /* Get Monit AMP */
             case 'j':
-                if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, DSP_NAME_SET_GET_MONIT_AMP_CH0, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1736,29 +1726,10 @@ int main (int argc, char *argv [])
 
                 /******** RFFE Module Functions *******/
 
-                /* Set RFFE Switching */
-            case rffesetsw:
-                item.name = RFFE_NAME_SET_GET_SW;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 0;
-                *item.write_val = item.rw;
-                *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get RFFE Switching */
-            case rffegetsw:
-                item.name = RFFE_NAME_SET_GET_SW;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
-                append_item (call_list, item);
-                break;
-
                 /* Set RFFE Attenuators */
             case rffesetatt:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_ATT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_ATT, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1771,8 +1742,8 @@ int main (int argc, char *argv [])
 
                 /* Get RFFE Attenuators */
             case rffegetatt:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_ATT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_ATT, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1785,8 +1756,8 @@ int main (int argc, char *argv [])
 
                 /* Set RFFE Temperature */
             case rffesettemp:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1799,8 +1770,8 @@ int main (int argc, char *argv [])
 
                 /* Read RFFE Temperature */
             case rffegettemp:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_TEMP_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1813,8 +1784,8 @@ int main (int argc, char *argv [])
 
                 /* Set RFFE Point */
             case rffesetpnt:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_SET_POINT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_SET_POINT_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1827,8 +1798,8 @@ int main (int argc, char *argv [])
 
                 /* Get RFFE Point */
             case rffegetpnt:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_SET_POINT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_SET_POINT_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1860,8 +1831,8 @@ int main (int argc, char *argv [])
 
                 /* Set RFFE Output */
             case rffesetout:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_OUTPUT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_HEATER_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1874,8 +1845,8 @@ int main (int argc, char *argv [])
 
                 /* Get RFFE Output */
             case rffegetout:
-                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_OUTPUT1, corr_name, item.write_val)) != BPM_CLIENT_SUCCESS) {
-                    fprintf(stderr, "%s: %s - '%s'\n", program_name, bpm_client_err_str(err), corr_name);
+                if ((err = parse_subopt (optarg, mount_opts, RFFE_NAME_SET_GET_HEATER_AC, corr_name, item.write_val)) != HALCS_CLIENT_SUCCESS) {
+                    fprintf(stderr, "%s: %s - '%s'\n", program_name, halcs_client_err_str(err), corr_name);
                     exit(EXIT_FAILURE);
                 }
                 item.name = strdup(corr_name);
@@ -1903,25 +1874,6 @@ int main (int argc, char *argv [])
                 item.rw = 0;
                 *item.write_val = item.rw;
                 *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Set RFFE Switch Level */
-            case rffesetswlvl:
-                item.name = RFFE_NAME_SET_GET_SW_LVL;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 0;
-                *item.write_val = item.rw;
-                *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get RFFE Switch Level */
-            case rffegetswlvl:
-                item.name = RFFE_NAME_SET_GET_SW_LVL;
-                item.service = RFFE_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
                 append_item (call_list, item);
                 break;
 
@@ -2186,9 +2138,9 @@ int main (int argc, char *argv [])
     }
 
     /* If we are here, all the parameters are good and the functions can be executed */
-    bpm_client_t *bpm_client = bpm_client_new (broker_endp, verbose, NULL);
-    if (bpm_client == NULL) {
-        fprintf(stderr, "[client]: Error in memory allocation for bpm_client\n");
+    halcs_client_t *halcs_client = halcs_client_new (broker_endp, verbose, NULL);
+    if (halcs_client == NULL) {
+        fprintf(stderr, "[client]: Error in memory allocation for halcs_client\n");
         exit(EXIT_FAILURE);
     }
 
@@ -2197,14 +2149,14 @@ int main (int argc, char *argv [])
 
     for ( ; function != NULL; function = zlist_next (call_list))
     {
-        int str_length = snprintf(NULL, 0, "BPM%u:DEVIO:%s%u", board_number, function->service, bpm_number);
+        int str_length = snprintf(NULL, 0, "HALCS%u:DEVIO:%s%u", board_number, function->service, bpm_number);
         char *func_service = zmalloc (str_length+1);
-        sprintf (func_service, "BPM%u:DEVIO:%s%u", board_number, function->service, bpm_number);
+        sprintf (func_service, "HALCS%u:DEVIO:%s%u", board_number, function->service, bpm_number);
         const disp_op_t* func_structure = bpm_func_translate (function->name);
-        bpm_client_err_e err = bpm_func_exec (bpm_client, func_structure, func_service, function->write_val, function->read_val);
+        halcs_client_err_e err = bpm_func_exec (halcs_client, func_structure, func_service, function->write_val, function->read_val);
 
-        if (err != BPM_CLIENT_SUCCESS) {
-            fprintf (stderr, "[client]: %s\n",bpm_client_err_str (err));
+        if (err != HALCS_CLIENT_SUCCESS) {
+            fprintf (stderr, "[client]: %s\n",halcs_client_err_str (err));
             exit(EXIT_FAILURE);
         }
 
@@ -2217,7 +2169,7 @@ int main (int argc, char *argv [])
 
     /***** Acquisition module routines *****/
     char acq_service[20];
-    sprintf (acq_service, "BPM%u:DEVIO:ACQ%u", board_number, bpm_number);
+    sprintf (acq_service, "HALCS%u:DEVIO:ACQ%u", board_number, bpm_number);
 
     /* Request data acquisition on server */
     acq_total_samples_val = (acq_samples_pre_val+acq_samples_post_val)*acq_num_shots_val;
@@ -2231,9 +2183,9 @@ int main (int argc, char *argv [])
             .chan = acq_chan_val
         };
 
-        bpm_client_err_e err = bpm_acq_start(bpm_client, acq_service, &acq_req);
-        if (err != BPM_CLIENT_SUCCESS) {
-            fprintf (stderr, "[client:acq]: '%s'\n", bpm_client_err_str(err));
+        halcs_client_err_e err = bpm_acq_start(halcs_client, acq_service, &acq_req);
+        if (err != HALCS_CLIENT_SUCCESS) {
+            fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
         }
     }
@@ -2241,11 +2193,11 @@ int main (int argc, char *argv [])
     /* Check if the previous acquisition has finished */
     if (acq_check) {
         if (check_poll) {
-            func_polling (bpm_client, ACQ_NAME_CHECK_DATA_ACQUIRE, acq_service, NULL, NULL, poll_timeout);
+            func_polling (halcs_client, ACQ_NAME_CHECK_DATA_ACQUIRE, acq_service, NULL, NULL, poll_timeout);
         } else {
-            bpm_client_err_e err = bpm_acq_check(bpm_client, acq_service);
-            if (err != BPM_CLIENT_SUCCESS) {
-                fprintf (stderr, "[client:acq]: '%s'\n", bpm_client_err_str(err));
+            halcs_client_err_e err = bpm_acq_check(halcs_client, acq_service);
+            if (err != HALCS_CLIENT_SUCCESS) {
+                fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             }
         }
     }
@@ -2265,14 +2217,14 @@ int main (int argc, char *argv [])
             }
         };
 
-        bpm_client_err_e err = bpm_acq_get_data_block (bpm_client, acq_service, &acq_trans);
+        halcs_client_err_e err = bpm_acq_get_data_block (halcs_client, acq_service, &acq_trans);
 
-        if (err == BPM_CLIENT_SUCCESS) {
-            PRINTV (verbose, "[client:acq]: bpm_get_block was successfully executed\n");
+        if (err == HALCS_CLIENT_SUCCESS) {
+            PRINTV (verbose, "[client:acq]: halcs_get_block was successfully executed\n");
             print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
                     filefmt_val);
         } else {
-            fprintf (stderr, "[client:acq]: bpm_get_block failed\n");
+            fprintf (stderr, "[client:acq]: halcs_get_block failed\n");
         }
         free(valid_data);
     }
@@ -2293,14 +2245,14 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        bpm_client_err_e err = bpm_acq_get_curve(bpm_client, acq_service, &acq_trans);
+        halcs_client_err_e err = bpm_acq_get_curve(halcs_client, acq_service, &acq_trans);
 
-        if (err == BPM_CLIENT_SUCCESS) {
+        if (err == HALCS_CLIENT_SUCCESS) {
             print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
                     filefmt_val);
             PRINTV (verbose, "[client:acq]: bpm_acq_get_curve was successfully executed\n");
         } else {
-            fprintf (stderr, "[client:acq]: bpm_acq_get_curve failed: %s\n", bpm_client_err_str(err));
+            fprintf (stderr, "[client:acq]: bpm_acq_get_curve failed: %s\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
         }
         acq_get_curve = 0;
@@ -2323,10 +2275,10 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        bpm_client_err_e err = bpm_full_acq(bpm_client, acq_service, &acq_trans, poll_timeout);
+        halcs_client_err_e err = bpm_full_acq(halcs_client, acq_service, &acq_trans, poll_timeout);
 
-        if (err != BPM_CLIENT_SUCCESS) {
-            fprintf (stderr, "[client:acq]: %s\n", bpm_client_err_str(err));
+        if (err != HALCS_CLIENT_SUCCESS) {
+            fprintf (stderr, "[client:acq]: %s\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
         }
         print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
@@ -2336,19 +2288,19 @@ int main (int argc, char *argv [])
     }
 
     char swap_service[20];
-    sprintf (swap_service, "BPM%u:DEVIO:SWAP%u", board_number, bpm_number);
+    sprintf (swap_service, "HALCS%u:DEVIO:SWAP%u", board_number, bpm_number);
     for (uint i = 0; i < (sizeof(gains) / sizeof((gains)[0])); ++i) {
         if (gains[i].call) {
             uint32_t dir_gain = 0;
             uint32_t inv_gain = 0;
             if (strncmp(gains[i].chan, "a", 1) == 0) {
-                bpm_get_gain_a(bpm_client, swap_service, &dir_gain, &inv_gain);
+                halcs_get_gain_a(halcs_client, swap_service, &dir_gain, &inv_gain);
             } else if (strncmp(gains[i].chan, "b", 1) == 0) {
-                bpm_get_gain_b(bpm_client, swap_service, &dir_gain, &inv_gain);
+                halcs_get_gain_b(halcs_client, swap_service, &dir_gain, &inv_gain);
             } else if (strncmp(gains[i].chan, "c", 1) == 0) {
-                bpm_get_gain_c(bpm_client, swap_service, &dir_gain, &inv_gain);
+                halcs_get_gain_c(halcs_client, swap_service, &dir_gain, &inv_gain);
             } else if (strncmp(gains[i].chan, "d", 1) == 0) {
-                bpm_get_gain_d(bpm_client, swap_service, &dir_gain, &inv_gain);
+                halcs_get_gain_d(halcs_client, swap_service, &dir_gain, &inv_gain);
             }
 
             if (gains[i].rw) {
@@ -2365,13 +2317,13 @@ int main (int argc, char *argv [])
                 }
 
                 if (strncmp(gains[i].chan, "a", 1) == 0) {
-                    bpm_set_gain_a(bpm_client, swap_service, dir_gain, inv_gain);
+                    halcs_set_gain_a(halcs_client, swap_service, dir_gain, inv_gain);
                 } else if (strncmp(gains[i].chan, "b", 1) == 0) {
-                    bpm_set_gain_b(bpm_client, swap_service, dir_gain, inv_gain);
+                    halcs_set_gain_b(halcs_client, swap_service, dir_gain, inv_gain);
                 } else if (strncmp(gains[i].chan, "c", 1) == 0) {
-                    bpm_set_gain_c(bpm_client, swap_service, dir_gain, inv_gain);
+                    halcs_set_gain_c(halcs_client, swap_service, dir_gain, inv_gain);
                 } else if (strncmp(gains[i].chan, "d", 1) == 0) {
-                    bpm_set_gain_d(bpm_client, swap_service, dir_gain, inv_gain);
+                    halcs_set_gain_d(halcs_client, swap_service, dir_gain, inv_gain);
                 }
             }
         }
@@ -2383,6 +2335,6 @@ int main (int argc, char *argv [])
     free (broker_endp);
     free (board_number_str);
     free (bpm_number_str);
-    bpm_client_destroy (&bpm_client);
+    halcs_client_destroy (&halcs_client);
     return 0;
 }

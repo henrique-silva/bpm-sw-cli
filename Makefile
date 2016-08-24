@@ -47,7 +47,7 @@ CFLAGS_PLATFORM += -Wno-error=\#warnings
 endif
 
 # Libraries
-LIBS = -lbpmclient -lmlm -lerrhand -lhutils -lczmq -lzmq
+LIBS = -lhalcsclient -lmlm -lerrhand -lhutils -lczmq -lzmq
 
 # General library flags -L<libdir>
 LFLAGS = -L${PREFIX}/lib
