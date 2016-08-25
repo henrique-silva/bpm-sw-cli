@@ -113,7 +113,7 @@ void append_item (zlist_t* list, call_func_t func)
 
 int print_var (call_var_t *var)
 {
-    const disp_op_t* func_structure = bpm_func_translate (var->name);
+    const disp_op_t* func_structure = halcs_func_translate (var->name);
 
     switch (DISP_GET_ATYPE(func_structure->retval))
     {
@@ -230,7 +230,7 @@ halcs_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, 
                     goto inv_function;
         }
     }
-    const disp_op_t* temp_func = bpm_func_translate(corr_name);
+    const disp_op_t* temp_func = halcs_func_translate(corr_name);
     if (temp_func == NULL) {
         err = HALCS_CLIENT_ERR_INV_FUNCTION;
         goto inv_function;
@@ -2152,8 +2152,8 @@ int main (int argc, char *argv [])
         int str_length = snprintf(NULL, 0, "HALCS%u:DEVIO:%s%u", board_number, function->service, bpm_number);
         char *func_service = zmalloc (str_length+1);
         sprintf (func_service, "HALCS%u:DEVIO:%s%u", board_number, function->service, bpm_number);
-        const disp_op_t* func_structure = bpm_func_translate (function->name);
-        halcs_client_err_e err = bpm_func_exec (halcs_client, func_structure, func_service, function->write_val, function->read_val);
+        const disp_op_t* func_structure = halcs_func_translate (function->name);
+        halcs_client_err_e err = halcs_func_exec (halcs_client, func_structure, func_service, function->write_val, function->read_val);
 
         if (err != HALCS_CLIENT_SUCCESS) {
             fprintf (stderr, "[client]: %s\n",halcs_client_err_str (err));
@@ -2183,7 +2183,7 @@ int main (int argc, char *argv [])
             .chan = acq_chan_val
         };
 
-        halcs_client_err_e err = bpm_acq_start(halcs_client, acq_service, &acq_req);
+        halcs_client_err_e err = halcs_acq_start(halcs_client, acq_service, &acq_req);
         if (err != HALCS_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
@@ -2195,7 +2195,7 @@ int main (int argc, char *argv [])
         if (check_poll) {
             func_polling (halcs_client, ACQ_NAME_CHECK_DATA_ACQUIRE, acq_service, NULL, NULL, poll_timeout);
         } else {
-            halcs_client_err_e err = bpm_acq_check(halcs_client, acq_service);
+            halcs_client_err_e err = halcs_acq_check(halcs_client, acq_service);
             if (err != HALCS_CLIENT_SUCCESS) {
                 fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             }
@@ -2217,7 +2217,7 @@ int main (int argc, char *argv [])
             }
         };
 
-        halcs_client_err_e err = bpm_acq_get_data_block (halcs_client, acq_service, &acq_trans);
+        halcs_client_err_e err = halcs_acq_get_data_block (halcs_client, acq_service, &acq_trans);
 
         if (err == HALCS_CLIENT_SUCCESS) {
             PRINTV (verbose, "[client:acq]: halcs_get_block was successfully executed\n");
@@ -2245,14 +2245,14 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        halcs_client_err_e err = bpm_acq_get_curve(halcs_client, acq_service, &acq_trans);
+        halcs_client_err_e err = halcs_acq_get_curve(halcs_client, acq_service, &acq_trans);
 
         if (err == HALCS_CLIENT_SUCCESS) {
             print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
                     filefmt_val);
-            PRINTV (verbose, "[client:acq]: bpm_acq_get_curve was successfully executed\n");
+            PRINTV (verbose, "[client:acq]: halcs_acq_get_curve was successfully executed\n");
         } else {
-            fprintf (stderr, "[client:acq]: bpm_acq_get_curve failed: %s\n", halcs_client_err_str(err));
+            fprintf (stderr, "[client:acq]: halcs_acq_get_curve failed: %s\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
         }
         acq_get_curve = 0;
@@ -2275,7 +2275,7 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        halcs_client_err_e err = bpm_full_acq(halcs_client, acq_service, &acq_trans, poll_timeout);
+        halcs_client_err_e err = halcs_full_acq(halcs_client, acq_service, &acq_trans, poll_timeout);
 
         if (err != HALCS_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: %s\n", halcs_client_err_str(err));
