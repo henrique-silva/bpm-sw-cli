@@ -171,36 +171,6 @@ char *mount_opts[] =
     [SUBOPT_END] = NULL
 };
 
-typedef struct _fe_gain {
-    const char *chan;
-    int call;
-    int rw;
-    int swap;
-    uint32_t value;
-} fe_gain;
-
-typedef fe_gain fe_gain_t;
-
-static fe_gain_t gains[16] =
-{
-    {"aa", 0, 1, 0, 0},
-    {"aa", 0, 0, 0, 0},
-    {"ac", 0, 1, 1, 0},
-    {"ac", 0, 0, 1, 0},
-    {"cc", 0, 1, 0, 0},
-    {"cc", 0, 0, 0, 0},
-    {"ca", 0, 1, 1, 0},
-    {"ca", 0, 0, 1, 0},
-    {"bb", 0, 1, 0, 0},
-    {"bb", 0, 0, 0, 0},
-    {"bd", 0, 1, 1, 0},
-    {"bd", 0, 0, 1, 0},
-    {"dd", 0, 1, 0, 0},
-    {"dd", 0, 0, 0, 0},
-    {"db", 0, 1, 1, 0},
-    {"db", 0, 0, 1, 0}
-};
-
 halcs_client_err_e parse_subopt (char *subopts, char *mount_opts[], char* name, char *corr_name, uint32_t *input)
 {
     halcs_client_err_e err = HALCS_CLIENT_SUCCESS;
@@ -308,20 +278,10 @@ void print_usage (const char *program_name, FILE* stream, int exit_code)
             "  -s  --getmonitpossum             Get Monitoring position Sum\n"
             "  -w  --getsw                      Get SW status\n"
             "  -W  --setsw <value>              Set SW status\n"
-            "  -t  --getswen                    Get SW Enable status\n"
-            "  -T  --setswen < 0|1 >            Set SW Enable\n"
             "  -z  --getdivclk                  Get divider clock\n"
             "  -Z  --setdivclk <value>          Set divider clock\n"
             "  -f  --getswdly                   Get SW delay\n"
             "  -F  --setswdly <value>           Set SW delay\n"
-            "  --getwdwen                       Get WDW Enable status\n"
-            "  --setwdwen < 0|1 >               Set WDW Enable\n"
-            "  --getwdwdly                      Get WDW delay\n"
-            "  --setwdwdly <value>              Set WDW delay\n"
-            "  --getgain[chan]                  Get RF Gain\n"
-            "                                     [chan must be a, b, c, or d]\n"
-            "  --setgain[chan] <value [db]>     Set RF Gain\n"
-            "                                     [chan must be a, b, c, or d]\n"
             "  --rffesetatt <0-31.5 [dB] >    Set RFFE attenuation\n"
             "  --rffegetatt                     Get RFFE attenuation\n"
             "  --rffesettemp  <chan=(1|2), value=[degrees]>\n"
@@ -465,26 +425,6 @@ enum {
     getfofbth,
     setmonitth,
     getmonitth,
-    setwdwen,
-    getwdwen,
-    setwdwdly,
-    getwdwdly,
-    setgainaa,
-    getgainaa,
-    setgainac,
-    getgainac,
-    setgaincc,
-    getgaincc,
-    setgainca,
-    getgainca,
-    setgainbb,
-    getgainbb,
-    setgaindd,
-    getgaindd,
-    setgainbd,
-    getgainbd,
-    setgaindb,
-    getgaindb,
     rffesetatt,
     rffegetatt,
     rffesettemp,
@@ -603,32 +543,10 @@ static struct option long_options[] =
     {"getmonitpossum",      required_argument,   NULL, 's'},
     {"setsw",               required_argument,   NULL, 'W'},
     {"getsw",               no_argument,         NULL, 'w'},
-    {"setswen",             required_argument,   NULL, 'T'},
-    {"getswen",             no_argument,         NULL, 't'},
     {"setdivclk",           required_argument,   NULL, 'Z'},
     {"getdivclk",           no_argument,         NULL, 'z'},
     {"setswdly",            required_argument,   NULL, 'F'},
     {"getswdly",            no_argument,         NULL, 'f'},
-    {"setwdwen",            required_argument,   NULL, setwdwen},
-    {"getwdwen",            no_argument,         NULL, getwdwen},
-    {"setwdwdly",           required_argument,   NULL, setwdwdly},
-    {"getwdwdly",           no_argument,         NULL, getwdwdly},
-    {"setgainaa",           required_argument,   NULL, setgainaa},
-    {"getgainaa",           no_argument,         NULL, getgainaa},
-    {"setgainac",           required_argument,   NULL, setgainac},
-    {"getgainac",           no_argument,         NULL, getgainac},
-    {"setgainbb",           required_argument,   NULL, setgainbb},
-    {"getgainbb",           no_argument,         NULL, getgainbb},
-    {"setgainbd",           required_argument,   NULL, setgainbd},
-    {"getgainbd",           no_argument,         NULL, getgainbd},
-    {"setgaincc",           required_argument,   NULL, setgaincc},
-    {"getgaincc",           no_argument,         NULL, getgaincc},
-    {"setgainca",           required_argument,   NULL, setgainca},
-    {"getgainca",           no_argument,         NULL, getgainca},
-    {"setgaindd",           required_argument,   NULL, setgaindd},
-    {"getgaindd",           no_argument,         NULL, getgaindd},
-    {"setgaindb",           required_argument,   NULL, setgaindb},
-    {"getgaindb",           no_argument,         NULL, getgaindb},
     {"rffesetatt",          required_argument,   NULL, rffesetatt},
     {"rffegetatt",          required_argument,   NULL, rffegetatt},
     {"rffesettemp",         required_argument,   NULL, rffesettemp},
@@ -1541,25 +1459,6 @@ int main (int argc, char *argv [])
                 append_item (call_list, item);
                 break;
 
-                /* Set SW Enable */
-            case 'T':
-                item.name = SWAP_NAME_SET_GET_SW_EN;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 0;
-                *item.write_val = item.rw;
-                *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get SW Enable */
-            case 't':
-                item.name = SWAP_NAME_SET_GET_SW_EN;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
-                append_item (call_list, item);
-                break;
-
                 /* Set SW Delay */
             case 'F':
                 item.name = SWAP_NAME_SET_GET_SW_DLY;
@@ -1596,132 +1495,6 @@ int main (int argc, char *argv [])
                 item.rw = 1;
                 *item.write_val = item.rw;
                 append_item (call_list, item);
-                break;
-
-                /* Set WDW Enable */
-            case setwdwen:
-                item.name = SWAP_NAME_SET_GET_WDW_EN;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 0;
-                *item.write_val = item.rw;
-                *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get WDW Enable */
-            case getwdwen:
-                item.name = SWAP_NAME_SET_GET_WDW_EN;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
-                append_item (call_list, item);
-                break;
-
-                /* Set WDW Delay */
-            case setwdwdly:
-                item.name = SWAP_NAME_SET_GET_WDW_DLY;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 0;
-                *item.write_val = item.rw;
-                *(item.write_val+4) = strtoul(optarg, NULL, 10);
-                append_item (call_list, item);
-                break;
-
-                /* Get WDW Delay */
-            case getwdwdly:
-                item.name = SWAP_NAME_SET_GET_WDW_DLY;
-                item.service = SWAP_MODULE_NAME;
-                item.rw = 1;
-                *item.write_val = item.rw;
-                append_item (call_list, item);
-                break;
-
-                /* Get Channel AA Gain */
-            case getgainaa:
-                gains[0].call = 1;
-                break;
-
-                /* Set Channel AA Gain */
-            case setgainaa:
-                gains[1].call = 1;
-                gains[1].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel AC Gain */
-            case getgainac:
-                gains[2].call = 1;
-                break;
-
-                /* Set Channel AC Gain */
-            case setgainac:
-                gains[3].call = 1;
-                gains[3].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel CC Gain */
-            case getgaincc:
-                gains[4].call = 1;
-                break;
-
-                /* Set Channel CC Gain */
-            case setgaincc:
-                gains[5].call = 1;
-                gains[5].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel CA Gain */
-            case getgainca:
-                gains[6].call = 1;
-                break;
-
-                /* Set Channel CA Gain */
-            case setgainca:
-                gains[7].call = 1;
-                gains[7].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel BB Gain */
-            case getgainbb:
-                gains[8].call = 1;
-                break;
-
-                /* Set Channel BB Gain */
-            case setgainbb:
-                gains[9].call = 1;
-                gains[9].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel BD Gain */
-            case getgainbd:
-                gains[10].call = 1;
-                break;
-
-                /* Set Channel BD Gain */
-            case setgainbd:
-                gains[11].call = 1;
-                gains[11].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel DD Gain */
-            case getgaindd:
-                gains[12].call = 1;
-                break;
-
-                /* Set Channel DD Gain */
-            case setgaindd:
-                gains[13].call = 1;
-                gains[13].value = strtoul(optarg, NULL, 10);
-                break;
-
-                /* Get Channel DB Gain */
-            case getgaindb:
-                gains[14].call = 1;
-                break;
-
-                /* Set Channel DB Gain */
-            case setgaindb:
-                gains[15].call = 1;
-                gains[15].value = strtoul(optarg, NULL, 10);
                 break;
 
                 /******** RFFE Module Functions *******/
@@ -2285,48 +2058,6 @@ int main (int argc, char *argv [])
                 filefmt_val);
         acq_full_call = 0;
         free(valid_data);
-    }
-
-    char swap_service[20];
-    sprintf (swap_service, "HALCS%u:DEVIO:SWAP%u", board_number, bpm_number);
-    for (uint i = 0; i < (sizeof(gains) / sizeof((gains)[0])); ++i) {
-        if (gains[i].call) {
-            uint32_t dir_gain = 0;
-            uint32_t inv_gain = 0;
-            if (strncmp(gains[i].chan, "a", 1) == 0) {
-                halcs_get_gain_a(halcs_client, swap_service, &dir_gain, &inv_gain);
-            } else if (strncmp(gains[i].chan, "b", 1) == 0) {
-                halcs_get_gain_b(halcs_client, swap_service, &dir_gain, &inv_gain);
-            } else if (strncmp(gains[i].chan, "c", 1) == 0) {
-                halcs_get_gain_c(halcs_client, swap_service, &dir_gain, &inv_gain);
-            } else if (strncmp(gains[i].chan, "d", 1) == 0) {
-                halcs_get_gain_d(halcs_client, swap_service, &dir_gain, &inv_gain);
-            }
-
-            if (gains[i].rw) {
-                if (gains[i].swap) {
-                    printf("swap_set_get_gain_%s: %u\n", gains[i].chan, inv_gain);
-                } else {
-                    printf("swap_set_get_gain_%s: %u\n", gains[i].chan, dir_gain);
-                }
-            } else {
-                if (gains[i].swap) {
-                    inv_gain = gains[i].value;
-                } else {
-                    dir_gain = gains[i].value;
-                }
-
-                if (strncmp(gains[i].chan, "a", 1) == 0) {
-                    halcs_set_gain_a(halcs_client, swap_service, dir_gain, inv_gain);
-                } else if (strncmp(gains[i].chan, "b", 1) == 0) {
-                    halcs_set_gain_b(halcs_client, swap_service, dir_gain, inv_gain);
-                } else if (strncmp(gains[i].chan, "c", 1) == 0) {
-                    halcs_set_gain_c(halcs_client, swap_service, dir_gain, inv_gain);
-                } else if (strncmp(gains[i].chan, "d", 1) == 0) {
-                    halcs_set_gain_d(halcs_client, swap_service, dir_gain, inv_gain);
-                }
-            }
-        }
     }
 
     /* Deallocate memory */
