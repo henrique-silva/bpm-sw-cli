@@ -25,7 +25,7 @@ override CXXFLAGS +=
 
 # Malamute 1.0.0 requires this to be defined
 # as all of its API is in DRAFT state
-CFLAGS_USR += -DMLM_BUILD_DRAFT_API
+CFLAGS_USR += -DMLM_BUILD_DRAFT_API -D__BOARD_AFCV3_1__
 
 CFLAGS_DEBUG =
 
