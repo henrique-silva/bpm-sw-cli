@@ -1,6 +1,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <acq_client.h>
 #include <halcs_client.h>
 
 #define DFLT_BIND_FOLDER "/tmp/bpm"
@@ -614,10 +615,10 @@ int main (int argc, char *argv [])
     uint32_t acq_total_samples_val = 0;
     uint32_t acq_chan_val = 0;
     int acq_full_call = 0;
-    int acq_start = 0;
-    int acq_check = 0;
+    int acq_start_call = 0;
+    int acq_check_call = 0;
     int acq_get_block = 0;
-    int acq_get_curve = 0;
+    int acq_get_curve_call = 0;
     uint32_t acq_block_id = 0;
     int check_poll = 0;
     int poll_timeout = -1;
@@ -1810,18 +1811,18 @@ int main (int argc, char *argv [])
 
                 /*  Set Acq Start */
             case 'I':
-                acq_start = 1;
+                acq_start_call = 1;
                 break;
 
                 /*  Check if the acquisition is finished */
             case 'K':
-                acq_check = 1;
+                acq_check_call = 1;
                 check_poll = 0;
                 break;
 
                 /*  Check if the acquisition is finished until timeout (-1 for infinite) */
             case acqcheckpoll:
-                acq_check = 1;
+                acq_check_call = 1;
                 check_poll = 1;
                 break;
 
@@ -1833,7 +1834,7 @@ int main (int argc, char *argv [])
 
                 /*  Get a whole data curve */
             case getcurve:
-                acq_get_curve = 1;
+                acq_get_curve_call = 1;
                 break;
 
                 /*  Perform full acq */
@@ -1887,21 +1888,21 @@ int main (int argc, char *argv [])
         exit(EXIT_FAILURE);
     }
 
-    if ((acq_check && check_poll) && (poll_timeout == 0)) {
+    if ((acq_check_call && check_poll) && (poll_timeout == 0)) {
         fprintf(stderr, "%s: If --acqcheckpoll is set, --timeout must be too!\n", program_name);
         exit(EXIT_FAILURE);
     }
 
-    if (acq_full_call && (acq_start || acq_check || acq_get_block || acq_get_curve)) {
+    if (acq_full_call && (acq_start_call || acq_check_call || acq_get_block || acq_get_curve_call)) {
         fprintf(stderr, "%s: If --fullacq is requested, the other acquisition functions don't need to be called. Executing --fullacq only...\n", program_name);
-        acq_start = 0;
-        acq_check = 0;
+        acq_start_call = 0;
+        acq_check_call = 0;
         acq_get_block = 0;
-        acq_get_curve = 0;
+        acq_get_curve_call = 0;
     }
 
     /* Check filefmt option. filefmt has the default value of 0 (text mode) */
-    if ((acq_full_call || acq_get_block || acq_get_curve) && filefmt_str != NULL) {
+    if ((acq_full_call || acq_get_block || acq_get_curve_call) && filefmt_str != NULL) {
         filefmt_val = strtoul (filefmt_str, NULL, 10);
 
         if (filefmt_val > END_FILE_FMT-1) {
@@ -1912,7 +1913,8 @@ int main (int argc, char *argv [])
 
     /* If we are here, all the parameters are good and the functions can be executed */
     halcs_client_t *halcs_client = halcs_client_new (broker_endp, verbose, NULL);
-    if (halcs_client == NULL) {
+    acq_client_t *acq_client = acq_client_new (broker_endp, verbose, NULL);
+    if (halcs_client == NULL || acq_client == NULL) {
         fprintf(stderr, "[client]: Error in memory allocation for halcs_client\n");
         exit(EXIT_FAILURE);
     }
@@ -1947,7 +1949,7 @@ int main (int argc, char *argv [])
     /* Request data acquisition on server */
     acq_total_samples_val = (acq_samples_pre_val+acq_samples_post_val)*acq_num_shots_val;
 
-    if (acq_start) {
+    if (acq_start_call) {
     /* Wrap the data request parameters */
         acq_req_t acq_req = {
             .num_samples_pre = acq_samples_pre_val,
@@ -1956,7 +1958,7 @@ int main (int argc, char *argv [])
             .chan = acq_chan_val
         };
 
-        halcs_client_err_e err = halcs_acq_start(halcs_client, acq_service, &acq_req);
+        halcs_client_err_e err = acq_start(acq_client, acq_service, &acq_req);
         if (err != HALCS_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
@@ -1964,16 +1966,18 @@ int main (int argc, char *argv [])
     }
 
     /* Check if the previous acquisition has finished */
-    if (acq_check) {
+    if (acq_check_call) {
         if (check_poll) {
             func_polling (halcs_client, ACQ_NAME_CHECK_DATA_ACQUIRE, acq_service, NULL, NULL, poll_timeout);
         } else {
-            halcs_client_err_e err = halcs_acq_check(halcs_client, acq_service);
+            halcs_client_err_e err = acq_check(acq_client, acq_service);
             if (err != HALCS_CLIENT_SUCCESS) {
                 fprintf (stderr, "[client:acq]: '%s'\n", halcs_client_err_str(err));
             }
         }
     }
+
+    const acq_chan_t *acq_chan = acq_get_chan (acq_client);
 
     /* Retrieve specific data block */
     if (acq_get_block) {
@@ -1990,7 +1994,7 @@ int main (int argc, char *argv [])
             }
         };
 
-        halcs_client_err_e err = halcs_acq_get_data_block (halcs_client, acq_service, &acq_trans);
+        halcs_client_err_e err = acq_get_data_block (acq_client, acq_service, &acq_trans);
 
         if (err == HALCS_CLIENT_SUCCESS) {
             PRINTV (verbose, "[client:acq]: halcs_get_block was successfully executed\n");
@@ -2003,7 +2007,7 @@ int main (int argc, char *argv [])
     }
 
     /* Returns a whole data curve */
-    if (acq_get_curve) {
+    if (acq_get_curve_call) {
         uint32_t data_size = acq_total_samples_val*acq_chan[acq_chan_val].sample_size;
         uint32_t *valid_data = (uint32_t *) zmalloc (data_size*sizeof (uint8_t));
 
@@ -2018,17 +2022,17 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        halcs_client_err_e err = halcs_acq_get_curve(halcs_client, acq_service, &acq_trans);
+        halcs_client_err_e err = acq_get_curve(acq_client, acq_service, &acq_trans);
 
         if (err == HALCS_CLIENT_SUCCESS) {
             print_data_curve (acq_chan_val, acq_trans.block.data, acq_trans.block.bytes_read,
                     filefmt_val);
-            PRINTV (verbose, "[client:acq]: halcs_acq_get_curve was successfully executed\n");
+            PRINTV (verbose, "[client:acq]: acq_get_curve was successfully executed\n");
         } else {
-            fprintf (stderr, "[client:acq]: halcs_acq_get_curve failed: %s\n", halcs_client_err_str(err));
+            fprintf (stderr, "[client:acq]: acq_get_curve failed: %s\n", halcs_client_err_str(err));
             exit(EXIT_FAILURE);
         }
-        acq_get_curve = 0;
+        acq_get_curve_call = 0;
         free(valid_data);
     }
 
@@ -2048,7 +2052,7 @@ int main (int argc, char *argv [])
                 .data_size = data_size }
         };
 
-        halcs_client_err_e err = halcs_full_acq(halcs_client, acq_service, &acq_trans, poll_timeout);
+        halcs_client_err_e err = acq_full(acq_client, acq_service, &acq_trans, poll_timeout);
 
         if (err != HALCS_CLIENT_SUCCESS) {
             fprintf (stderr, "[client:acq]: %s\n", halcs_client_err_str(err));
@@ -2067,5 +2071,6 @@ int main (int argc, char *argv [])
     free (board_number_str);
     free (bpm_number_str);
     halcs_client_destroy (&halcs_client);
+    acq_client_destroy (&acq_client);
     return 0;
 }
